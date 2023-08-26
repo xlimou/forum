@@ -72,6 +72,12 @@
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>${druid-starter.version}</version>
         </dependency>
+        <!-- hutool工具包 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.15</version>
+        </dependency>
 
 
 
