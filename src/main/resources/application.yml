@@ -1,21 +1,30 @@
-# Spring ????
+# Spring 全局配置
 spring:
   application:
-    name: limou?? # ???
+    name: limou论坛 # 项目名
   output:
     ansi:
-      enabled: ALWAYS # ?????????
+      enabled: ALWAYS # 控制台输出彩色日志
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/forum_db?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: ltb20001106
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
-# ?????
+# 服务器配置
 server:
   port: 58080
 
-# ????
+# 日志配置
 logging:
   pattern:
     dateformat: yyyy-MM-dd HH:mm:ss
   level:
-    root: info # ??????
-    com.limou.forum: debug # ????????
+    root: info # 默认日志级别
+    com.limou.forum: debug # 指定包的日志级别
   file:
-    path: C:/Users/Admin/Desktop/forum_log # ???????
+    path: C:/Users/Admin/Desktop/forum_log # 日志保存目录
+
+# Mybatis 相关配置，这个配置是单独的，顶格写
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
