@@ -6,7 +6,7 @@ spring:
     ansi:
       enabled: ALWAYS # 控制台输出彩色日志
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/forum_db?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/forum_db?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
     username: root
     password: ltb20001106
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -28,3 +28,24 @@ logging:
 # Mybatis 相关配置，这个配置是单独的，顶格写
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
+
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    # OpenAPI文档开关, true: 开启OpenAPI文档访问功能, false: 关闭
+    enabled: true
+    # JSON格式的OpenAPI文档的访问路径
+    path: /v3/api-docs
+  # 扫描哪些包来生成OpenAPI文档, 多个包名用逗号分隔
+  packages-to-scan: com.limou.forum.controller
+
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn

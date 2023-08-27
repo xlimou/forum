@@ -35,6 +35,8 @@
         <mybatis-generator-plugin.version>1.4.1</mybatis-generator-plugin.version>
         <!-- 德鲁伊数据源 -->
         <druid-starter.version>1.2.18</druid-starter.version>
+        <!-- knife4j -->
+        <knife4j-starter.version>4.0.0</knife4j-starter.version>
 
     </properties>
 
@@ -77,6 +79,24 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.15</version>
+        </dependency>
+        <!-- knife4j基于Swagger规范的实现，底层是springfox -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
+            <version>${knife4j-starter.version}</version>
+        </dependency>
+        <!--再添加一个jar-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <!--保持版本与Knife4j v4.0的版本一致，避免jar包冲突，因为Knife4j-v4.0.0版本依赖的springdoc版本是1.6.9 -->
+            <version>1.6.9</version>
+        </dependency>
+        <!-- SpringBoot健康监控 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
 
