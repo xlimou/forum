@@ -1,17 +1,23 @@
 package com.limou.forum.common;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 全局返回结果
  *
  * @author 小李哞哞
  * @date 2023/8/27
  */
+@Schema(name = "返回结果类")
 public class AppResult<T> {
     // 状态码
+    @Schema(title = "状态码")
     private int code;
     // 描述信息
+    @Schema(title = "描述信息")
     private String message;
     // 具体的数据
+    @Schema(title = "返回的具体数据")
     private T data;
 
     public AppResult(int code, String message) {
