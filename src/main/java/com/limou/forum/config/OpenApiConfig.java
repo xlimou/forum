@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 接口文档配置
  * @author 小李哞哞
  * @date 2023/8/28
  */
@@ -17,11 +18,11 @@ public class OpenApiConfig {
     public OpenAPI springOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("title")
-                        .description("desc")
+                        .title("limou论坛系统API")
+                        .description("limou论坛系统前后端分离API测试")
                         .contact(new Contact()
-                                .name("name")
-                                .email("email")
+                                .name("小李哞哞")
+                                .email("1330622668@qq.com")
                                 .url("http://limou.love"))
                         .version("0.0.1"));
     }
