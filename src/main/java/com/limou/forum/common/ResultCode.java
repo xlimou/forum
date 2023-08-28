@@ -11,7 +11,7 @@ public enum ResultCode {
     SUCCESS                         (0, "操作成功"),
     FAILED                          (1000, "操作失败"),
     FAILED_UNAUTHORIZED             (1001, "未授权"),
-    FAILED_PARAMS_VALIDATE          (1002, "参数校验失败"),
+    FAILED_PARAMS_INVALIDATE          (1002, "参数校验失败"),
     FAILED_FORBIDDEN                (1003, "禁止访问"),
     FAILED_CREATE                   (1004, "新增失败"),
     FAILED_NOT_EXISTS               (1005, "资源不存在"),

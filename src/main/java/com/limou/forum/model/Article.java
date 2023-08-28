@@ -1,9 +1,11 @@
 package com.limou.forum.model;
 
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 
+@ToString
 public class Article {
     private Long id;
 

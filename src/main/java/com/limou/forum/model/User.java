@@ -1,38 +1,58 @@
 package com.limou.forum.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.ToString;
+
 import java.util.Date;
 
+@Schema(name = "用户类")
+@ToString
 public class User {
+    @Schema(title = "编号")
     private Long id;
 
+    @Schema(title = "用户名")
     private String username;
 
+    @Schema(title = "密码")
     private String password;
 
+    @Schema(title = "昵称")
     private String nickname;
 
+    @Schema(title = "手机号")
     private String phoneNumber;
 
+    @Schema(title = "邮箱地址")
     private String email;
 
+    @Schema(title = "性别")
     private Byte gender;
 
     private String salt;
 
+    @Schema(title = "头像地址")
     private String avatarUrl;
 
+    @Schema(title = "发帖数量")
     private Integer articleCount;
 
+    @Schema(title = "是否管理员")
     private Byte isAdmin;
 
+    @Schema(title = "备注，自我介绍")
     private String remark;
 
+    @Schema(title = "状态，0正常，1禁言")
     private Byte state;
 
+    @Schema(title = "是否删除，0否，1是")
     private Byte deleteState;
 
+    @Schema(title = "创建时间，精确到秒")
     private Date createTime;
 
+    @Schema(title = "更新时间，精确到秒")
     private Date updateTime;
 
     public Long getId() {

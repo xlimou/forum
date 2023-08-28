@@ -1,7 +1,10 @@
 package com.limou.forum.model;
 
+import lombok.ToString;
+
 import java.util.Date;
 
+@ToString
 public class Board {
     private Long id;
 
