@@ -19,6 +19,7 @@
     <include refid="Base_Column_List" />
     from t_board
     where id = #{id,jdbcType=BIGINT}
+    and deleteState = 0
   </select>
   <insert id="insert" parameterType="com.limou.forum.model.Board" useGeneratedKeys="true" keyProperty="id">
     insert into t_board (id, name, articleCount, 

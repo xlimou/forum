@@ -18,8 +18,8 @@ public class OpenApiConfig {
     public OpenAPI springOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("limou论坛系统API")
-                        .description("limou论坛系统前后端分离API测试")
+                        .title("哞哞论坛系统API")
+                        .description("哞哞论坛系统前后端分离API测试")
                         .contact(new Contact()
                                 .name("小李哞哞")
                                 .email("1330622668@qq.com")

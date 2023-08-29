@@ -31,6 +31,7 @@
     <include refid="Blob_Column_List" />
     from t_article
     where id = #{id,jdbcType=BIGINT}
+    and deleteState = 0
   </select>
   <insert id="insert" parameterType="com.limou.forum.model.Article" useGeneratedKeys="true" keyProperty="id">
     insert into t_article (id, boardId, userId, 

@@ -8,6 +8,7 @@ import com.limou.forum.dao.UserMapper;
 import com.limou.forum.exception.ApplicationException;
 import com.limou.forum.model.User;
 import com.limou.forum.services.IUserService;
+import com.limou.forum.utils.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,63 @@ public class UserServiceImpl implements IUserService {
     private UserMapper userMapper;
 
     @Override
+    public User selectByUsername(String username) {
+        // 非空校验
+        if (StrUtil.isBlank(username)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 返回查询结果
+        return userMapper.selectByUsername(username);
+    }
+
+    @Override
+    public User login(String username, String password) {
+        // 非空校验
+        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 按用户名查询用户信息
+        User user = selectByUsername(username);
+        // 对查询结果做非空校验
+        if (ObjUtil.isEmpty(user)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_LOGIN.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_LOGIN));
+        }
+        // 校验密码
+        boolean checked = MD5Util.checkPwd(password, user.getPassword(), user.getSalt());
+        if (!checked) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_LOGIN.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_LOGIN));
+        }
+        // 登录成功，返回用户信息
+        log.info("登录成功, username = {}", user.getUsername());
+        return user;
+    }
+
+    @Override
+    public User selectById(Long id) {
+        // 非空校验
+        if (ObjUtil.isEmpty(id) || id <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 查询数据库并返回结果
+        return userMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public void createNormalUser(User user) {
         // 非空校验
         if (ObjUtil.isEmpty(user)
@@ -41,10 +99,10 @@ public class UserServiceImpl implements IUserService {
         }
 
         // 按用户名查询用户信息
-        User existsUser = userMapper.selectByUsername(user.getUsername());
+        User existsUser = selectByUsername(user.getUsername());
         // 判断用户是否存在
         if (ObjUtil.isNotEmpty(existsUser)) {
-            log.info(ResultCode.FAILED_USER_EXISTS.toString());
+            log.warn(ResultCode.FAILED_USER_EXISTS.toString());
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_EXISTS));
         }
 
@@ -69,5 +127,37 @@ public class UserServiceImpl implements IUserService {
 
         // 新增成功
         log.info("新增用户成功，username = {}", user.getUsername());
+    }
+
+    @Override
+    public void addOneArticleCountById(Long id) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id) || id <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_USER_ARTICLE_COUNT.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_ARTICLE_COUNT));
+        }
+        // 查询对应的用户
+        User user = userMapper.selectByPrimaryKey(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(user)) {
+            // 打印日志
+            log.warn(ResultCode.ERROR_IS_NULL.toString() + ", user id = {}", id);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_IS_NULL));
+        }
+        // 更新用户的发帖数量，注意要创建一个新对象，设置关键的值即可，如果直接使用查出来的对象，那么将会修改所有值
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setArticleCount(user.getArticleCount() + 1);
+        int row = userMapper.updateByPrimaryKeySelective(updateUser);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
     }
 }

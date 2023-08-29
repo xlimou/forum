@@ -1,5 +1,6 @@
 package com.limou.forum.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -9,22 +10,25 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @date 2023/8/27
  */
 @Schema(name = "返回结果类")
-public class AppResult<T> {
+public class AppResult {
     // 状态码
     @Schema(title = "状态码")
+    @JsonInclude(JsonInclude.Include.ALWAYS) // 无论任何情况，都参与JSON序列化
     private int code;
     // 描述信息
     @Schema(title = "描述信息")
+    @JsonInclude(JsonInclude.Include.ALWAYS) // 无论任何情况，都参与JSON序列化
     private String message;
     // 具体的数据
     @Schema(title = "返回的具体数据")
-    private T data;
+    @JsonInclude(JsonInclude.Include.ALWAYS) // 无论任何情况，都参与JSON序列化
+    private Object data;
 
     public AppResult(int code, String message) {
         this(code, message, null);
     }
 
-    public AppResult(int code, String message, T data) {
+    public AppResult(int code, String message, Object data) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -49,12 +53,12 @@ public class AppResult<T> {
         return new AppResult(ResultCode.SUCCESS.getCode(), message);
     }
 
-    public static <T> AppResult<T> success(T data) {
-        return new AppResult<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
+    public static AppResult success(Object data) {
+        return new AppResult(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
     }
 
-    public static <T> AppResult<T> success(String message, T data) {
-        return new AppResult<>(ResultCode.SUCCESS.getCode(), message, data);
+    public static AppResult success(String message, Object data) {
+        return new AppResult(ResultCode.SUCCESS.getCode(), message, data);
     }
 
     /**
@@ -96,11 +100,11 @@ public class AppResult<T> {
         this.message = message;
     }
 
-    public T getData() {
+    public Object getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(Object data) {
         this.data = data;
     }
 }

@@ -6,6 +6,7 @@ import com.limou.forum.utils.MD5Util;
 import com.limou.forum.utils.UUIDUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -21,14 +22,15 @@ class UserServiceImplTest {
     @Resource
     private IUserService userService;
 
+    @Transactional
     @Test
     void createNormalUser() {
         // 构造user对象
         User user = new User();
-        user.setUsername("bitboy");
-        user.setNickname("bitboy");
+        user.setUsername("testuser333");
+        user.setNickname("testuser333");
         // 定义原始密码
-        String password = "123456";
+        String password = "123123";
         // 生成盐
         String salt = UUIDUtil.UUID_32();
         // 设置盐
@@ -40,5 +42,29 @@ class UserServiceImplTest {
         userService.createNormalUser(user);
         // 打印结果
         System.out.println(user);
+    }
+
+    @Test
+    void selectByUsername() {
+        User user = userService.selectByUsername("bitboy");
+        System.out.println(user);
+    }
+
+    @Test
+    void login() {
+        User bitboy = userService.login("bitboy", "123456");
+        System.out.println(bitboy);
+    }
+
+    @Test
+    void selectById() {
+        User user = userService.selectById(1L);
+        System.out.println(user);
+    }
+
+    @Transactional
+    @Test
+    void addOneArticleCountById() {
+        userService.addOneArticleCountById(1L);
     }
 }

@@ -1,7 +1,7 @@
 # Spring 全局配置
 spring:
   application:
-    name: limou论坛 # 项目名
+    name: 哞哞论坛 # 项目名
   output:
     ansi:
       enabled: ALWAYS # 控制台输出彩色日志
@@ -10,6 +10,9 @@ spring:
     username: root
     password: ltb20001106
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss # 返回数据时JSON日期序列化格式
+    default-property-inclusion: NON_NULL # 不为null时序列化
 
 # 服务器配置
 server:
@@ -54,3 +57,11 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+
+# 项目自定义相关配置
+forum:
+  login:
+    url: sign-in.html # 未登录状态强制跳转页面
+  index: # 首页相关配置
+    board-num: 9 # 首页中显示的板块个数
+

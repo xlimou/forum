@@ -28,6 +28,7 @@
     <include refid="Base_Column_List" />
     from t_user
     where id = #{id,jdbcType=BIGINT}
+    and deleteState = 0
   </select>
   <insert id="insert" parameterType="com.limou.forum.model.User" useGeneratedKeys="true" keyProperty="id">
     insert into t_user (id, username, password, 
