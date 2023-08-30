@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.limou.forum.dao.ArticleMapper">
+
+
+    <!-- 自定义结果集映射 -->
+    <resultMap id="AllInfoResultMap" extends="ResultMapWithBLOBs" type="com.limou.forum.model.Article">
+        <!-- 关联的用户的映射 -->
+        <association property="user" resultMap="com.limou.forum.dao.UserMapper.BaseResultMap" columnPrefix="u_"/>
+    </resultMap>
+    <!-- 查询所有未删除的帖子信息和相关作者信息，不包含content -->
+    <select id="selectAll" resultMap="AllInfoResultMap">
+        SELECT
+            a.id,
+            u.id AS u_id,
+            u.avatarUrl AS u_avatarUrl,
+            u.nickname AS u_nickname,
+            a.boardId,
+            a.userId,
+            a.title,
+            a.createTime,
+            a.visitCount,
+            a.likeCount,
+            a.replyCount,
+            a.state
+        FROM
+            t_article a
+            JOIN t_user u ON a.userId = u.id
+        WHERE
+            a.deleteState = 0
+        ORDER BY
+            a.createTime DESC
+    </select>
+</mapper>

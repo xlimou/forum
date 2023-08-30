@@ -16,14 +16,13 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author 小李哞哞
@@ -90,5 +89,26 @@ public class ArticleController {
 
         // 返回结果
         return AppResult.success();
+    }
+
+    /**
+     * 获取帖子列表
+     *
+     * @param boardId 板块id
+     * @return AppResult
+     */
+    @Operation(summary = "获取帖子列表", description = "若参数boardId为空，则查询所有帖子；否则查询指定板块的帖子")
+    @Parameter(name = "boardId", description = "板块id", in = ParameterIn.PATH)
+    @GetMapping({"/getArticleList", "/getArticleList/{boardId}"}) // boardId可为空
+    public AppResult getArticleList(@PathVariable(value = "boardId", required = false) Long boardId) {
+        // 调用Service查询帖子列表
+        List<Article> articles = articleService.selectAll();
+        // 非空校验
+        if (ObjUtil.isEmpty(articles)) {
+            // 如果不赋值一个空对象，那么将来JSON字符串里的data就是"null"这个字符串，如果赋值空对象了就是一个空数组[]
+            articles = new ArrayList<>();
+        }
+        // 返回结果
+        return AppResult.success(articles);
     }
 }

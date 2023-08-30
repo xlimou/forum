@@ -116,10 +116,10 @@ public class UserController {
      * @return AppResult
      */
     @Operation(summary = "获取用户信息", description = "id不为空则查询当前登录用户信息，否则查询指定id用户信息")
-    @Parameter(name = "id", description = "用户id", in = ParameterIn.DEFAULT)
-    @GetMapping("/info")
+    @Parameter(name = "id", description = "用户id", in = ParameterIn.PATH)
+    @GetMapping({"/info", "/info/{id}"})
     public AppResult getUserInfo(HttpServletRequest request,
-                                 @RequestParam(value = "id", required = false) Long id) {
+                                 @PathVariable(value = "id", required = false) Long id) {
 
         User user = null;
 

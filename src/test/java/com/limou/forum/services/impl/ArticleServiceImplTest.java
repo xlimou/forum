@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,5 +32,11 @@ class ArticleServiceImplTest {
         article.setTitle("单元测试");
         article.setContent("测试内容");
         articleService.create(article);
+    }
+
+    @Test
+    void selectAll() {
+        List<Article> articles = articleService.selectAll();
+        articles.forEach(System.out::println);
     }
 }

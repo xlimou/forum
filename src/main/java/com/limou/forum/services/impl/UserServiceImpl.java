@@ -119,9 +119,9 @@ public class UserServiceImpl implements IUserService {
 
         // 写入数据库
         int row = userMapper.insertSelective(user);
-        // 新增失败
+        // 结果校验
         if (row != 1) {
-            log.info(ResultCode.FAILED_CREATE.toString());
+            log.info(ResultCode.FAILED_CREATE.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED_CREATE));
         }
 

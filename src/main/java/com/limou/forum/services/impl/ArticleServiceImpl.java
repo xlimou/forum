@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author 小李哞哞
@@ -97,5 +98,10 @@ public class ArticleServiceImpl implements IArticleService {
 
         // 测试事务是否正常生效
         // throw new ApplicationException("测试事务");
+    }
+
+    @Override
+    public List<Article> selectAll() {
+        return articleMapper.selectAll();
     }
 }

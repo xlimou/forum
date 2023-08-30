@@ -37,6 +37,8 @@
         <druid-starter.version>1.2.18</druid-starter.version>
         <!-- knife4j -->
         <knife4j-starter.version>4.3.0</knife4j-starter.version>
+        <!-- hutool工具包 -->
+        <hutool.version>5.8.15</hutool.version>
 
     </properties>
 
@@ -78,7 +80,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.15</version>
+            <version>${hutool.version}</version>
         </dependency>
         <!-- knife4j基于openapi3规范的实现，底层是springdoc -->
         <dependency>

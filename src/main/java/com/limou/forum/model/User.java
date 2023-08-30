@@ -1,6 +1,7 @@
 package com.limou.forum.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.ToString;
 
@@ -28,6 +29,7 @@ public class User {
     @JsonIgnore
     private String salt;
 
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private String avatarUrl;
 
     private Integer articleCount;
