@@ -28,6 +28,7 @@ public class AppInterceptorConfigurer implements WebMvcConfigurer {
                 .excludePathPatterns("/swagger*/**") // 排除swagger下所有
                 .excludePathPatterns("/v3*/**") // 排除登录v3下所有，和swagger相关
                 .excludePathPatterns("/doc*/**") // 排除knife4j接口文档
+                .excludePathPatterns("/webjars*/**") // 排除knife4j接口文档相关
                 .excludePathPatterns("/dist/**") // 排除所有静态文件
                 .excludePathPatterns("/image/**")
                 .excludePathPatterns("/**.ico")

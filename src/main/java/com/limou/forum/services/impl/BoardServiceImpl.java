@@ -38,6 +38,11 @@ public class BoardServiceImpl implements IBoardService {
     }
 
     @Override
+    public List<Board> selectAllBySort() {
+        return boardMapper.selectAllBySort();
+    }
+
+    @Override
     public Board selectById(Long id) {
         // 参数校验
         if (ObjUtil.isEmpty(id) || id <= 0) {

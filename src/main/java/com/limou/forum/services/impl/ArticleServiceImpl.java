@@ -85,7 +85,7 @@ public class ArticleServiceImpl implements IArticleService {
         // 非空校验
         if (ObjUtil.isEmpty(board)) {
             // 打印日志
-            log.warn(ResultCode.ERROR_IS_NULL.toString() + ", 发帖失败, board id = {}", article.getBoardId());
+            log.warn(ResultCode.ERROR_IS_NULL.toString() + ", 发帖失败, 板块不存在, board id = {}", article.getBoardId());
             // 抛出异常
             throw new ApplicationException(AppResult.failed(ResultCode.ERROR_IS_NULL));
         }

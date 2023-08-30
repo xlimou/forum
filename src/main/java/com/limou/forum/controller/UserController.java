@@ -45,9 +45,16 @@ public class UserController {
      * @return
      */
     @Operation(summary = "用户注册")
-    @Parameters({@Parameter(name = "username", description = "用户名", required = true, in = ParameterIn.DEFAULT), @Parameter(name = "nickname", description = "昵称", required = true, in = ParameterIn.DEFAULT), @Parameter(name = "password", description = "密码", required = true, in = ParameterIn.DEFAULT), @Parameter(name = "passwordRepeat", description = "重复密码", required = true, in = ParameterIn.DEFAULT),})
+    @Parameters({
+            @Parameter(name = "username", description = "用户名", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "nickname", description = "昵称", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "password", description = "密码", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "passwordRepeat", description = "重复密码", required = true, in = ParameterIn.DEFAULT),})
     @PostMapping("/register")
-    public AppResult register(@RequestParam("username") @NonNull String username, @RequestParam("nickname") @NonNull String nickname, @RequestParam("password") @NonNull String password, @RequestParam("passwordRepeat") @NonNull String passwordRepeat) {
+    public AppResult register(@RequestParam("username") @NonNull String username,
+                              @RequestParam("nickname") @NonNull String nickname,
+                              @RequestParam("password") @NonNull String password,
+                              @RequestParam("passwordRepeat") @NonNull String passwordRepeat) {
 
         // 校验密码与重复密码是否相同
         if (!StrUtil.equals(password, passwordRepeat)) {
@@ -80,9 +87,13 @@ public class UserController {
      * @return
      */
     @Operation(summary = "用户登录")
-    @Parameters({@Parameter(name = "username", description = "用户名", required = true, in = ParameterIn.DEFAULT), @Parameter(name = "password", description = "密码", required = true, in = ParameterIn.DEFAULT)})
+    @Parameters({
+            @Parameter(name = "username", description = "用户名", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "password", description = "密码", required = true, in = ParameterIn.DEFAULT)})
     @PostMapping("/login")
-    public AppResult login(HttpServletRequest request, @RequestParam("username") @NonNull String username, @RequestParam("password") @NonNull String password) {
+    public AppResult login(HttpServletRequest request,
+                           @RequestParam("username") @NonNull String username,
+                           @RequestParam("password") @NonNull String password) {
 
         // 调用Service中的登录方法，返回User对象
         User user = userService.login(username, password);
@@ -107,7 +118,8 @@ public class UserController {
     @Operation(summary = "获取用户信息", description = "id不为空则查询当前登录用户信息，否则查询指定id用户信息")
     @Parameter(name = "id", description = "用户id", in = ParameterIn.DEFAULT)
     @GetMapping("/info")
-    public AppResult getUserInfo(HttpServletRequest request, @RequestParam(value = "id", required = false) Long id) {
+    public AppResult getUserInfo(HttpServletRequest request,
+                                 @RequestParam(value = "id", required = false) Long id) {
 
         User user = null;
 

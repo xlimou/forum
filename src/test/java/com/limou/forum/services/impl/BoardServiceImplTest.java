@@ -33,4 +33,10 @@ class BoardServiceImplTest {
     void addOneArticleCountById() {
         boardService.addOneArticleCountById(1L);
     }
+
+    @Test
+    void selectAllBySort() {
+        List<Board> boards = boardService.selectAllBySort();
+        boards.forEach(System.out::println);
+    }
 }

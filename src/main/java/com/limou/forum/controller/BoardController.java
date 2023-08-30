@@ -36,7 +36,7 @@ public class BoardController {
     private Integer indexBoardNum;
 
     /**
-     * 查询首页板块列表
+     * 获取首页板块列表
      *
      * @return AppResult
      */
@@ -46,6 +46,24 @@ public class BoardController {
         log.info("首页板块个数为: {}", indexBoardNum);
         // 调用Service查询结果
         List<Board> boards = boardService.selectByNum(indexBoardNum);
+        // 非空校验
+        if (ObjUtil.isEmpty(boards)) {
+            boards = new ArrayList<>();
+        }
+        // 返回结果
+        return AppResult.success(boards);
+    }
+
+    /**
+     * 获取所有板块记录，根据sort升序排列
+     *
+     * @return AppResult
+     */
+    @Operation(summary = "获取所有板块记录")
+    @GetMapping("/allList")
+    public AppResult allList() {
+        // 调用Service查询结果
+        List<Board> boards = boardService.selectAllBySort();
         // 非空校验
         if (ObjUtil.isEmpty(boards)) {
             boards = new ArrayList<>();

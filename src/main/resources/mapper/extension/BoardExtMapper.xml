@@ -16,4 +16,16 @@
             sort ASC
         LIMIT #{num, jdbcType=INTEGER} OFFSET 0
     </select>
+
+    <!-- 查询全部有效的板块记录 -->
+    <select id="selectAllBySort" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            t_board
+        where
+            deleteState = 0
+        order by
+            sort asc
+    </select>
 </mapper>

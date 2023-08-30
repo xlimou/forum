@@ -19,4 +19,6 @@ public interface BoardMapper {
     int updateByPrimaryKey(Board row);
 
     List<Board> selectByNum(@Param("num") Integer num);
+
+    List<Board> selectAllBySort();
 }

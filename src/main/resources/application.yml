@@ -47,11 +47,6 @@ springdoc:
   # 扫描哪些包来生成OpenAPI文档, 多个包名用逗号分隔
   packages-to-scan: com.limou.forum.controller
 
-swagger:
-  application-name: ${spring.application.name}
-  application-version: 1.0
-  application-description: xxxxxxx
-  try-host: http://127.0.0.1:${server.port}
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true

@@ -21,6 +21,7 @@ class ArticleServiceImplTest {
     private IArticleService articleService;
 
 
+    @Transactional
     @Test
     void create() {
         Article article = new Article();

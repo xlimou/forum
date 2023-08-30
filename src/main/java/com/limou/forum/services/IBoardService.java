@@ -19,6 +19,13 @@ public interface IBoardService {
     List<Board> selectByNum(Integer num);
 
     /**
+     * 查询所有有效记录，升序
+     *
+     * @return 查询结果
+     */
+    List<Board> selectAllBySort();
+
+    /**
      * 根据id查询板块信息
      *
      * @param id 板块id
