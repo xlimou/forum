@@ -1,6 +1,5 @@
 package com.limou.forum.model;
 
-import lombok.Data;
 import lombok.ToString;
 
 import java.util.Date;
@@ -40,6 +39,19 @@ public class Article {
      * 关联对象 - 板块
      */
     private Board board;
+
+    /**
+     * 是否为作者 - 这个属性用来在帖子详情页判断是否是作者在操作
+     */
+    private boolean isOwn = false;
+
+    public boolean isOwn() {
+        return isOwn;
+    }
+
+    public void setOwn(boolean own) {
+        isOwn = own;
+    }
 
     public Board getBoard() {
         return board;

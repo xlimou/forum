@@ -1,6 +1,7 @@
 package com.limou.forum.controller;
 
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.limou.forum.common.AppResult;
 import com.limou.forum.common.ResultCode;
 import com.limou.forum.config.AppConfig;
@@ -129,7 +130,13 @@ public class ArticleController {
     @Operation(summary = "获取帖子详细信息", description = "包含帖子信息、作者信息以及板块信息")
     @Parameter(name = "id", description = "帖子id", required = true, in = ParameterIn.PATH)
     @GetMapping("/getDetails/{id}")
-    public AppResult getDetails(@PathVariable("id") @NonNull Long id) {
+    public AppResult getDetails(HttpServletRequest request,
+                                @PathVariable("id") @NonNull Long id) {
+
+        // 从Session当中获取用户信息
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+
         // 调用Service查询帖子详细信息
         Article article = articleService.selectDetailById(id);
         // 非空校验
@@ -139,7 +146,72 @@ public class ArticleController {
             // 返回结果
             return AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS);
         }
+
+        // 设置是否为作者访问帖子详情
+        article.setOwn(ObjUtil.equals(user.getId(), article.getUserId()));
         // 返回结果
         return AppResult.success(article);
+    }
+
+    /**
+     * 编辑帖子
+     *
+     * @param id      帖子id
+     * @param title   帖子标题
+     * @param content 帖子内容
+     * @return AppResult
+     */
+    @Operation(summary = "编辑帖子")
+    @Parameters({
+            @Parameter(name = "id", description = "帖子id", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "title", description = "帖子标题", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "content", description = "帖子内容", required = true, in = ParameterIn.DEFAULT)
+    })
+    @PostMapping("/modify")
+    public AppResult modify(HttpServletRequest request,
+                            @RequestParam("id") @NonNull Long id,
+                            @RequestParam("title") @NonNull String title,
+                            @RequestParam("content") @NonNull String content) {
+
+        HttpSession session = request.getSession(false);
+        // 获取当前操作的用户
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        // 判断用户是否被禁言
+        if (user.getState() == 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_USER_BANNED.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_USER_BANNED);
+        }
+        // 获取帖子信息
+        Article article = articleService.selectById(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(article)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS);
+        }
+        // 判断当前编辑用户是否是作者
+        if (ObjUtil.notEqual(user.getId(), article.getUserId())) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_FORBIDDEN.toString() + ", 并非本帖子的作者进行编辑操作, 操作失败");
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_FORBIDDEN);
+        }
+        // 判断帖子的状态是否正常 - 已归档
+        if (article.getState() == 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_BANNED.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_ARTICLE_BANNED);
+        }
+
+        // 调用Service进行修改
+        articleService.modify(id, title, content);
+        // 打印日志
+        log.info("编辑成功, user id = {}, article id = {}", user.getId(), article.getId());
+        // 返回成功结果
+        return AppResult.success();
     }
 }

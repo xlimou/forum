@@ -51,4 +51,16 @@ class ArticleServiceImplTest {
         Article article = articleService.selectDetailById(8L);
         System.out.println(article);
     }
+
+    @Transactional
+    @Test
+    void modify() {
+        articleService.modify(8L, "测试修改", "修改后的内容");
+    }
+
+    @Test
+    void selectById() {
+        Article article = articleService.selectById(8L);
+        System.out.println(article);
+    }
 }

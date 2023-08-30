@@ -35,10 +35,27 @@ public interface IArticleService {
     List<Article> selectByBoardId(Long boardId);
 
     /**
+     * 根据帖子id查询帖子信息
+     *
+     * @param id 帖子id
+     * @return 帖子信息
+     */
+    Article selectById(Long id);
+
+    /**
      * 根据帖子id查询帖子详细信息(包含帖子信息、作者信息和板块信息)
      *
      * @param id 帖子id
      * @return 帖子详细信息
      */
     Article selectDetailById(Long id);
+
+    /**
+     * 编辑帖子
+     *
+     * @param id      帖子id
+     * @param title   帖子标题
+     * @param content 帖子正文
+     */
+    void modify(Long id, String title, String content);
 }

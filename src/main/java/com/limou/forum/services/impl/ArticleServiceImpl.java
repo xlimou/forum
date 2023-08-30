@@ -164,4 +164,47 @@ public class ArticleServiceImpl implements IArticleService {
         // 返回数据
         return article;
     }
+
+    @Override
+    public void modify(Long id, String title, String content) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id)
+                || id <= 0
+                || StrUtil.isBlank(title)
+                || StrUtil.isBlank(content)) {
+
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 构造article对象
+        Article updateArticle = new Article();
+        updateArticle.setId(id);
+        updateArticle.setTitle(title);
+        updateArticle.setContent(content);
+        updateArticle.setUpdateTime(new Date());
+        // 调用DAO修改帖子
+        int row = articleMapper.updateByPrimaryKeySelective(updateArticle);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
+
+    @Override
+    public Article selectById(Long id) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id) || id <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 查询数据库并返回结果
+        return articleMapper.selectByPrimaryKey(id);
+    }
 }
