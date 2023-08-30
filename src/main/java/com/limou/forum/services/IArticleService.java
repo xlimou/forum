@@ -33,4 +33,12 @@ public interface IArticleService {
      * @return 帖子列表
      */
     List<Article> selectByBoardId(Long boardId);
+
+    /**
+     * 根据帖子id查询帖子详细信息(包含帖子信息、作者信息和板块信息)
+     *
+     * @param id 帖子id
+     * @return 帖子详细信息
+     */
+    Article selectDetailById(Long id);
 }

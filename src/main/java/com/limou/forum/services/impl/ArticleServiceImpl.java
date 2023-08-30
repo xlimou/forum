@@ -126,4 +126,42 @@ public class ArticleServiceImpl implements IArticleService {
         // 查询数据库并返回结果
         return articleMapper.selectByBoardId(boardId);
     }
+
+    @Override
+    public Article selectDetailById(Long id) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id) || id <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 调用DAO查询帖子信息
+        Article article = articleMapper.selectDetailById(id);
+        // 因为要更新访问量，所以必须进行非空校验
+        if (ObjUtil.isEmpty(article)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString() + ", article id = {}", id);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS));
+        }
+        // 访问量 + 1
+        article.setVisitCount(article.getVisitCount() + 1);
+        Article updateArticle = new Article();
+        updateArticle.setId(article.getId());
+        updateArticle.setVisitCount(article.getVisitCount());
+        // 调用DAO，更新帖子访问量
+        int row = articleMapper.updateByPrimaryKeySelective(updateArticle);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+        // 打印日志
+        log.info("article id = {} 的帖子访问量 + 1 .", id);
+        // 返回数据
+        return article;
+    }
 }

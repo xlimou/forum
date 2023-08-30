@@ -45,4 +45,10 @@ class ArticleServiceImplTest {
         List<Article> articles = articleService.selectByBoardId(1L);
         articles.forEach(System.out::println);
     }
+
+    @Test
+    void selectDetailById() {
+        Article article = articleService.selectDetailById(8L);
+        System.out.println(article);
+    }
 }

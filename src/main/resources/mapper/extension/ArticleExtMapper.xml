@@ -7,8 +7,10 @@
 
     <!-- 自定义结果集映射 -->
     <resultMap id="AllInfoResultMap" extends="ResultMapWithBLOBs" type="com.limou.forum.model.Article">
-        <!-- 关联的用户的映射 -->
+        <!-- 关联用户的映射 -->
         <association property="user" resultMap="com.limou.forum.dao.UserMapper.BaseResultMap" columnPrefix="u_"/>
+        <!-- 关联板块的映射 -->
+        <association property="board" resultMap="com.limou.forum.dao.BoardMapper.BaseResultMap" columnPrefix="b_"/>
     </resultMap>
     <!-- 查询所有未删除的帖子信息和相关作者信息，不包含content -->
     <select id="selectAll" resultMap="AllInfoResultMap">
@@ -57,5 +59,38 @@
             AND boardId = #{boardId, jdbcType=BIGINT}
         ORDER BY
             a.createTime DESC
+    </select>
+
+    <!-- 按照id查询帖子详细信息(包含帖子信息、作者信息和板块信息) -->
+    <select id="selectDetailById" resultMap="AllInfoResultMap" parameterType="java.lang.Long">
+        SELECT
+            u.id AS u_id,
+            u.avatarUrl AS u_avatarUrl,
+            u.nickname AS u_nickname,
+            u.gender AS u_gender,
+            u.isAdmin AS u_isAdmin,
+            u.state AS u_state,
+            u.deleteState AS u_deleteState,
+            b.id AS b_id,
+            b.name AS b_name,
+            b.state AS b_state,
+            b.deleteState AS b_deleteState,
+            a.id,
+            a.boardId,
+            a.userId,
+            a.title,
+            a.content,
+            a.createTime,
+            a.visitCount,
+            a.likeCount,
+            a.replyCount,
+            a.state
+        FROM
+            t_article a
+            JOIN t_user u ON a.userId = u.id
+            JOIN t_board b ON a.boardId = b.id
+        WHERE
+            a.deleteState = 0
+            AND a.id = #{id, jdbcType=BIGINT}
     </select>
 </mapper>

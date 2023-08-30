@@ -119,4 +119,27 @@ public class ArticleController {
         // 返回结果
         return AppResult.success(articles);
     }
+
+    /**
+     * 根据帖子id获取帖子详细信息(包含帖子信息、作者信息以及板块信息)
+     *
+     * @param id 帖子id
+     * @return 帖子详细信息
+     */
+    @Operation(summary = "获取帖子详细信息", description = "包含帖子信息、作者信息以及板块信息")
+    @Parameter(name = "id", description = "帖子id", required = true, in = ParameterIn.PATH)
+    @GetMapping("/getDetails/{id}")
+    public AppResult getDetails(@PathVariable("id") @NonNull Long id) {
+        // 调用Service查询帖子详细信息
+        Article article = articleService.selectDetailById(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(article)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            // 返回结果
+            return AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS);
+        }
+        // 返回结果
+        return AppResult.success(article);
+    }
 }

@@ -36,6 +36,19 @@ public class Article {
      */
     private User user;
 
+    /**
+     * 关联对象 - 板块
+     */
+    private Board board;
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
     public User getUser() {
         return user;
     }
