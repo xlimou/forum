@@ -39,4 +39,10 @@ class ArticleServiceImplTest {
         List<Article> articles = articleService.selectAll();
         articles.forEach(System.out::println);
     }
+
+    @Test
+    void selectByBoardId() {
+        List<Article> articles = articleService.selectByBoardId(1L);
+        articles.forEach(System.out::println);
+    }
 }

@@ -33,4 +33,29 @@
         ORDER BY
             a.createTime DESC
     </select>
+
+    <!-- 查询指定板块id的未删除的帖子信息和相关作者信息，不包含content -->
+    <select id="selectByBoardId" resultMap="AllInfoResultMap" parameterType="java.lang.Long">
+        SELECT
+            a.id,
+            u.id AS u_id,
+            u.avatarUrl AS u_avatarUrl,
+            u.nickname AS u_nickname,
+            a.boardId,
+            a.userId,
+            a.title,
+            a.createTime,
+            a.visitCount,
+            a.likeCount,
+            a.replyCount,
+            a.state
+        FROM
+            t_article a
+                JOIN t_user u ON a.userId = u.id
+        WHERE
+            a.deleteState = 0
+            AND boardId = #{boardId, jdbcType=BIGINT}
+        ORDER BY
+            a.createTime DESC
+    </select>
 </mapper>

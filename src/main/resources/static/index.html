@@ -427,6 +427,7 @@
                     + '</a>'
                     + '</li>'
                 // 为版块绑定当前版块数据对象以便后续获取
+                // 将itemHtml字符串转换成jQuery对象便于后续操作
                 let boardItem = $(itemHtml);
                 // 把版块信息绑定到当前导航单元
                 boardItem.data('board', board);

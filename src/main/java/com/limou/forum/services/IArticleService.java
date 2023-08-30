@@ -20,9 +20,17 @@ public interface IArticleService {
     void create(Article article);
 
     /**
-     * 查询所有帖子信息
+     * 查询帖子列表
      *
      * @return 帖子列表
      */
     List<Article> selectAll();
+
+    /**
+     * 根据板块id查询帖子列表
+     *
+     * @param boardId 板块id
+     * @return 帖子列表
+     */
+    List<Article> selectByBoardId(Long boardId);
 }

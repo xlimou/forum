@@ -39,4 +39,10 @@ class BoardServiceImplTest {
         List<Board> boards = boardService.selectAllBySort();
         boards.forEach(System.out::println);
     }
+
+    @Test
+    void selectById() {
+        Board board = boardService.selectById(2L);
+        System.out.println(board);
+    }
 }

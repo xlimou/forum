@@ -102,7 +102,15 @@ public class ArticleController {
     @GetMapping({"/getArticleList", "/getArticleList/{boardId}"}) // boardId可为空
     public AppResult getArticleList(@PathVariable(value = "boardId", required = false) Long boardId) {
         // 调用Service查询帖子列表
-        List<Article> articles = articleService.selectAll();
+        List<Article> articles = null;
+        // 参数校验
+        if (ObjUtil.isEmpty(boardId)) {
+            // 查询所有帖子
+            articles = articleService.selectAll();
+        } else {
+            // 查询指定板块下的帖子
+            articles = articleService.selectByBoardId(boardId);
+        }
         // 非空校验
         if (ObjUtil.isEmpty(articles)) {
             // 如果不赋值一个空对象，那么将来JSON字符串里的data就是"null"这个字符串，如果赋值空对象了就是一个空数组[]

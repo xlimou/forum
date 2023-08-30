@@ -8,6 +8,7 @@
                   子标题
                 </div> -->
                 <h2 class="page-title" id="article_list_board_title">
+                    <!-- 如果是板块页面，这个值将替换为板块名称 -->
                     首页
                 </h2>
                 <!-- 帖子数量 -->
@@ -66,13 +67,10 @@
         // ========================= 获取版块下帖子信息 =======================
         // 获取当前选中的版块
         let activeLiEl = $('#topBoardList>.active');
-        // 构造query string
-        let queryString = '';
+        // 取出绑定的板块信息
         let boardData = activeLiEl.data('board');
         // 导航栏版块Item是否绑定版块数据
         if (boardData) {
-            // 构造query string
-            queryString = '?boardId=' + boardData.id;
             // 获取版块信息
             getBoardInfo(boardData.id);
         } else {
@@ -87,16 +85,41 @@
             if (!boardId) {
                 return;
             }
-            // 发送请求， 成功后，显示版块相关信息
-            $.ajax({});
+            // 发送请求，成功后，显示版块相关信息
+            $.ajax({
+                type: 'get',
+                url: 'board/getById/' + boardId,
+                success: function (respData) {
+                    if (respData.code == 0) {
+                        let board = respData.data;
+                        // 更新页面内容
+                        $('#article_list_board_title').html(board.name);
+                        $('#article_list_count_board').html('帖子数量: ' + board.articleCount);
+                    } else {
+                        $.toast({
+                            heading: '警告',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function () {
+                    $.toast({
+                        heading: '错误',
+                        text: '访问出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
         }
 
         // ========================= 获取帖子列表 =======================
         // 成功后，调用listBuildArticleList()方法，构建帖子列表
         $.ajax({
             type: 'get',
-            url: 'article/getArticleList',
-            success: function(respData) {
+            // 注意一定要给三目带括号，不然会出错
+            url: 'article/getArticleList/' + (boardData ? boardData.id : ''),
+            success: function (respData) {
                 if (respData.code == 0) {
                     listBuildArticleList(respData.data);
                 } else {
@@ -107,7 +130,7 @@
                     });
                 }
             },
-            error: function() {
+            error: function () {
                 $.toast({
                     heading: '错误',
                     text: '访问出现问题，请与管理员联系',
