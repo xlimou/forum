@@ -58,4 +58,11 @@ public interface IArticleService {
      * @param content 帖子正文
      */
     void modify(Long id, String title, String content);
+
+    /**
+     * 点赞帖子
+     *
+     * @param id 帖子id
+     */
+    void thumbsById(Long id);
 }

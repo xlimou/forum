@@ -285,7 +285,7 @@
         $.ajax({
             type: 'get',
             url: 'article/getDetails/' + currentArticle.id,
-            success: function(respData) {
+            success: function (respData) {
                 if (respData.code == 0) {
                     initArticleDetails(respData.data);
                 } else {
@@ -296,7 +296,7 @@
                     });
                 }
             },
-            error: function() {
+            error: function () {
                 $.toast({
                     heading: '错误',
                     text: '访问出现问题，请与管理员联系',
@@ -470,7 +470,36 @@
         // url: '/article/thumbsUp?id=' + currentArticle.id
         // 成功后，修改点赞个数 currentArticle.likeCount = currentArticle.likeCount + 1;
         $('#details_btn_like_count').click(function () {
-            $.ajax({});
+            $.ajax({
+                type: 'get',
+                url: 'article/thumbsUp/' + currentArticle.id,
+                success: function (respData) {
+                    if (respData.code == 0) {
+                        // 修改点赞个数
+                        currentArticle.likeCount = currentArticle.likeCount + 1;
+                        // 修改页面上的点赞个数
+                        $('#details_article_likeCount').html(currentArticle.likeCount);
+                        $.toast({
+                            heading: '提示',
+                            text: '点赞成功',
+                            icon: 'success'
+                        });
+                    } else {
+                        $.toast({
+                            heading: '警告',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function () {
+                    $.toast({
+                        heading: '错误',
+                        text: '访问出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
         });
 
         // ====================== 回复帖子 ======================

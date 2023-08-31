@@ -63,4 +63,10 @@ class ArticleServiceImplTest {
         Article article = articleService.selectById(8L);
         System.out.println(article);
     }
+
+    @Transactional
+    @Test
+    void thumbsById() {
+        articleService.thumbsById(6L);
+    }
 }

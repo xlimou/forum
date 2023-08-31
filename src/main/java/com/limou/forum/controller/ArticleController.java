@@ -10,6 +10,7 @@ import com.limou.forum.model.Board;
 import com.limou.forum.model.User;
 import com.limou.forum.services.IArticleService;
 import com.limou.forum.services.IBoardService;
+import com.limou.forum.services.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -41,6 +42,17 @@ public class ArticleController {
     @Resource
     private IBoardService boardService;
 
+    @Resource
+    private IUserService userService;
+
+    /**
+     * 发布帖子
+     *
+     * @param boardId 板块id
+     * @param title   帖子标题
+     * @param content 帖子内容
+     * @return AppResult
+     */
     @Operation(summary = "发布帖子")
     @Parameters({
             @Parameter(name = "boardId", description = "板块id", required = true, in = ParameterIn.DEFAULT),
@@ -56,12 +68,7 @@ public class ArticleController {
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute(AppConfig.USER_SESSION);
         // 校验发贴用户是否被禁言
-        if (user.getState() == 1) {
-            // 打印日志
-            log.warn(ResultCode.FAILED_USER_BANNED.toString());
-            // 返回结果
-            return AppResult.failed(ResultCode.FAILED_USER_BANNED);
-        }
+        userService.checkState(request);
 
         // 校验板块是否可用
         Board board = boardService.selectById(boardId);
@@ -177,12 +184,7 @@ public class ArticleController {
         // 获取当前操作的用户
         User user = (User) session.getAttribute(AppConfig.USER_SESSION);
         // 判断用户是否被禁言
-        if (user.getState() == 1) {
-            // 打印日志
-            log.warn(ResultCode.FAILED_USER_BANNED.toString());
-            // 返回失败结果
-            return AppResult.failed(ResultCode.FAILED_USER_BANNED);
-        }
+        userService.checkState(request);
         // 获取帖子信息
         Article article = articleService.selectById(id);
         // 非空校验
@@ -212,6 +214,27 @@ public class ArticleController {
         // 打印日志
         log.info("编辑成功, user id = {}, article id = {}", user.getId(), article.getId());
         // 返回成功结果
+        return AppResult.success();
+    }
+
+    /**
+     * 点赞帖子
+     *
+     * @param id 帖子id
+     * @return AppResult
+     */
+    @Operation(summary = "点赞帖子")
+    @Parameter(name = "id", description = "帖子id", required = true, in = ParameterIn.PATH)
+    @GetMapping("/thumbsUp/{id}")
+    public AppResult thumbsUp(HttpServletRequest request,
+                              @PathVariable("id") @NonNull Long id) {
+
+        // 判断用户是否被禁言
+        userService.checkState(request);
+        // 调用Service层执行业务
+        articleService.thumbsById(id);
+        // 打印日志
+        log.info("点赞成功，article id = {}", id);
         return AppResult.success();
     }
 }

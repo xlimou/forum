@@ -207,4 +207,38 @@ public class ArticleServiceImpl implements IArticleService {
         // 查询数据库并返回结果
         return articleMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public void thumbsById(Long id) {
+        // 直接调用定义好的Service方法，并且该方法里已经进行了参数校验
+        Article article = selectById(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(article)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS));
+        }
+        // 状态校验 - 已归档
+        if (article.getState() == 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_BANNED.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_BANNED));
+        }
+        // 构造要更新的对象
+        Article updateArticle = new Article();
+        updateArticle.setId(article.getId());
+        updateArticle.setLikeCount(article.getLikeCount() + 1);
+        updateArticle.setUpdateTime(new Date());
+        // 调用DAO执行更新操作
+        int row = articleMapper.updateByPrimaryKeySelective(updateArticle);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
 }

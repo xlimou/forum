@@ -4,16 +4,18 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.limou.forum.common.AppResult;
 import com.limou.forum.common.ResultCode;
+import com.limou.forum.config.AppConfig;
 import com.limou.forum.dao.UserMapper;
 import com.limou.forum.exception.ApplicationException;
 import com.limou.forum.model.User;
 import com.limou.forum.services.IUserService;
 import com.limou.forum.utils.MD5Util;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.io.Resources;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 
 /**
@@ -158,6 +160,19 @@ public class UserServiceImpl implements IUserService {
             log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
             // 抛出异常
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
+
+    @Override
+    public void checkState(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        // 获取当前登录的用户
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        if (user.getState() == 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_USER_BANNED.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_BANNED));
         }
     }
 }

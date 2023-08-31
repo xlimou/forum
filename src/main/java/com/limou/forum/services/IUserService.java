@@ -1,6 +1,9 @@
 package com.limou.forum.services;
 
+import com.limou.forum.exception.ApplicationException;
 import com.limou.forum.model.User;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author 小李哞哞
@@ -45,4 +48,9 @@ public interface IUserService {
      * @param id 用户id
      */
     void addOneArticleCountById(Long id);
+
+    /**
+     * 判断当前登录用户是否被禁言，若被禁言则会抛出异常
+     */
+    void checkState(HttpServletRequest request) throws ApplicationException;
 }
