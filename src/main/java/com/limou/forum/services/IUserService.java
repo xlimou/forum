@@ -43,11 +43,18 @@ public interface IUserService {
     User selectById(Long id);
 
     /**
-     * 更新当前用户的发帖数
+     * 用户的发帖数 + 1
      *
      * @param id 用户id
      */
     void addOneArticleCountById(Long id);
+
+    /**
+     * 用户的发帖数 - 1
+     *
+     * @param id 用户id
+     */
+    void subOneArticleCountById(Long id);
 
     /**
      * 判断当前登录用户是否被禁言，若被禁言则会抛出异常

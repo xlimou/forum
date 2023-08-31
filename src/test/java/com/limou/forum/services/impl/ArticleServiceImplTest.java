@@ -69,4 +69,9 @@ class ArticleServiceImplTest {
     void thumbsById() {
         articleService.thumbsById(6L);
     }
+
+    @Test
+    void deleteById() {
+        articleService.deleteById(13L);
+    }
 }

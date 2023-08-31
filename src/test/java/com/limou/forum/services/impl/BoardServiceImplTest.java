@@ -45,4 +45,10 @@ class BoardServiceImplTest {
         Board board = boardService.selectById(2L);
         System.out.println(board);
     }
+
+    @Transactional
+    @Test
+    void subOneArticleCountById() {
+        boardService.subOneArticleCountById(1L);
+    }
 }

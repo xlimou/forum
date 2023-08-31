@@ -34,9 +34,16 @@ public interface IBoardService {
     Board selectById(Long id);
 
     /**
-     * 更新当前板块的帖子数量
+     * 板块的帖子数量 + 1
      *
      * @param id 板块id
      */
     void addOneArticleCountById(Long id);
+
+    /**
+     * 板块的帖子数量 - 1
+     *
+     * @param id 板块id
+     */
+    void subOneArticleCountById(Long id);
 }

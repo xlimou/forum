@@ -194,7 +194,7 @@ public class ArticleController {
             // 返回失败结果
             return AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS);
         }
-        // 判断当前编辑用户是否是作者
+        // 判断当前操作用户是否是作者
         if (ObjUtil.notEqual(user.getId(), article.getUserId())) {
             // 打印日志
             log.warn(ResultCode.FAILED_FORBIDDEN.toString() + ", 并非本帖子的作者进行编辑操作, 操作失败");
@@ -235,6 +235,48 @@ public class ArticleController {
         articleService.thumbsById(id);
         // 打印日志
         log.info("点赞成功，article id = {}", id);
+        return AppResult.success();
+    }
+
+    /**
+     * 根据帖子id删除帖子
+     *
+     * @param id 帖子id
+     * @return AppResult
+     */
+    @Operation(summary = "删除帖子")
+    @Parameter(name = "id", description = "帖子id", required = true, in = ParameterIn.PATH)
+    @GetMapping("/delete/{id}")
+    public AppResult deleteById(HttpServletRequest request,
+                                @PathVariable("id") @NonNull Long id) {
+
+        // 获取当前操作的用户
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+
+        // 校验当前用户是否被禁言
+        userService.checkState(request);
+        // 调用Service查询帖子信息
+        Article article = articleService.selectById(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(article)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            // 返回结果
+            return AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS);
+        }
+        // 判断当前操作用户是否是作者
+        if (ObjUtil.notEqual(user.getId(), article.getUserId())) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_FORBIDDEN.toString() + ", 并非本帖子的作者进行删除操作, 操作失败");
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_FORBIDDEN);
+        }
+        // 调用Service进行删除
+        articleService.deleteById(id);
+        // 打印日志
+        log.info("删除帖子成功, article id = {}, user id = {}, board id = {}", article.getId(), article.getUserId(), article.getBoardId());
+        // 返回成功结果
         return AppResult.success();
     }
 }

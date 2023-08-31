@@ -241,4 +241,46 @@ public class ArticleServiceImpl implements IArticleService {
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
         }
     }
+
+    @Override
+    public void deleteById(Long id) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id) || id <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 调用DAO查询帖子信息
+        Article article = articleMapper.selectByPrimaryKey(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(article)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS));
+        }
+        // 构造要更新的对象
+        Article updateArticle = new Article();
+        updateArticle.setId(article.getId());
+        updateArticle.setDeleteState((byte) 1);
+        updateArticle.setUpdateTime(new Date());
+        // 调用DAO修改帖子deleteState字段
+        int row = articleMapper.updateByPrimaryKeySelective(updateArticle);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+
+        // 帖子的作者发帖数 - 1
+        userService.subOneArticleCountById(article.getUserId());
+        // 帖子所在板块的帖子数量 - 1
+        boardService.subOneArticleCountById(article.getBoardId());
+
+        // 测试事务是否正常生效
+        // throw new ApplicationException("测试事务");
+    }
 }

@@ -341,7 +341,7 @@
             // 没有传参数，表示获取当前登录用户的信息
             url: 'user/info',
             // 回调方法
-            success: function(respData) {
+            success: function (respData) {
                 // 判断响应的状态码
                 if (respData.code == 0) {
                     // 设置页面上用户的信息
@@ -366,7 +366,7 @@
                     });
                 }
             },
-            error: function() {
+            error: function () {
                 $.toast({
                     heading: '错误',
                     text: '访问出现问题，请与管理员联系',
@@ -380,7 +380,7 @@
         $.ajax({
             type: 'get',
             url: 'board/topList',
-            success: function(respData) {
+            success: function (respData) {
                 if (respData.code == 0) {
                     // 构建板块列表
                     buildTopBoard(respData.data);
@@ -393,7 +393,7 @@
                     });
                 }
             },
-            error: function() {
+            error: function () {
                 $.toast({
                     heading: '错误',
                     text: '访问出现问题，请与管理员联系',
@@ -477,7 +477,7 @@
             $.ajax({
                 type: 'get',
                 url: 'user/logout',
-                complete: function() {
+                complete: function () {
                     // 当请求完成时执行，无论成功与否都跳转到登录页面
                     location.assign('/sign-in.html');
                 }

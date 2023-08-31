@@ -531,7 +531,34 @@
         // 成功后，调用changeNavActive($('#nav-link-title'));  回到首页
         // url: 'article/delete?id=' + $('#details_article_id').val()
         $('#details_artile_delete').click(function () {
-            $.ajax({});
+            $.ajax({
+                type: 'get',
+                url: 'article/delete/' + $('#details_article_id').val(),
+                success: function (respData) {
+                    if (respData.code == 0) {
+                        changeNavActive($('#nav_board_index'));
+                        // changeNavActive($('#nav-link-title'));
+                        $.toast({
+                            heading: '提示',
+                            text: '删除成功',
+                            icon: 'success'
+                        });
+                    } else {
+                        $.toast({
+                            heading: '警告',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function () {
+                    $.toast({
+                        heading: '错误',
+                        text: '访问出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
 
         });
 

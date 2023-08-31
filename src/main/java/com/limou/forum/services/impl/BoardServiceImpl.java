@@ -86,4 +86,42 @@ public class BoardServiceImpl implements IBoardService {
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
         }
     }
+
+    @Override
+    public void subOneArticleCountById(Long id) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id) || id <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_BOARD_ARTICLE_COUNT.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_BOARD_ARTICLE_COUNT));
+        }
+        // 查询对应的板块
+        Board board = boardMapper.selectByPrimaryKey(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(board)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_BOARD_NOT_EXISTS.toString() + ", board id = {}", id);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_BOARD_NOT_EXISTS));
+        }
+        // 更新板块的帖子数量，注意要创建一个新对象，设置关键的值即可，如果直接使用查出来的对象，那么将会修改所有值
+        Board updateBoard = new Board();
+        updateBoard.setId(board.getId());
+        updateBoard.setArticleCount(board.getArticleCount() - 1);
+        // 判断减1之后是否小于0
+        if (updateBoard.getArticleCount() < 0) {
+            // 小于0就设置为0
+            updateBoard.setArticleCount(0);
+        }
+        // 调用DAO
+        int row = boardMapper.updateByPrimaryKeySelective(updateBoard);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
 }

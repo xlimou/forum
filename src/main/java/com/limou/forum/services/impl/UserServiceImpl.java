@@ -132,6 +132,19 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public void checkState(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        // 获取当前登录的用户
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        if (user.getState() == 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_USER_BANNED.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_BANNED));
+        }
+    }
+
+    @Override
     public void addOneArticleCountById(Long id) {
         // 参数校验
         if (ObjUtil.isEmpty(id) || id <= 0) {
@@ -145,9 +158,9 @@ public class UserServiceImpl implements IUserService {
         // 非空校验
         if (ObjUtil.isEmpty(user)) {
             // 打印日志
-            log.warn(ResultCode.ERROR_IS_NULL.toString() + ", user id = {}", id);
+            log.warn(ResultCode.FAILED_USER_NOT_EXISTS.toString() + ", user id = {}", id);
             // 抛出异常
-            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_IS_NULL));
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS));
         }
         // 更新用户的发帖数量，注意要创建一个新对象，设置关键的值即可，如果直接使用查出来的对象，那么将会修改所有值
         User updateUser = new User();
@@ -164,15 +177,40 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void checkState(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        // 获取当前登录的用户
-        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
-        if (user.getState() == 1) {
+    public void subOneArticleCountById(Long id) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id) || id <= 0) {
             // 打印日志
-            log.warn(ResultCode.FAILED_USER_BANNED.toString());
+            log.warn(ResultCode.FAILED_USER_ARTICLE_COUNT.toString());
             // 抛出异常
-            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_BANNED));
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_ARTICLE_COUNT));
+        }
+        // 查询对应的用户
+        User user = userMapper.selectByPrimaryKey(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(user)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_USER_NOT_EXISTS.toString() + ", user id = {}", id);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS));
+        }
+        // 更新用户的发帖数量，注意要创建一个新对象，设置关键的值即可，如果直接使用查出来的对象，那么将会修改所有值
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setArticleCount(user.getArticleCount() - 1);
+        // 判断减1之后是否小于0
+        if (updateUser.getArticleCount() < 0) {
+            // 小于0就设置为0
+            updateUser.setArticleCount(0);
+        }
+        // 调用DAO
+        int row = userMapper.updateByPrimaryKeySelective(updateUser);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
         }
     }
 }

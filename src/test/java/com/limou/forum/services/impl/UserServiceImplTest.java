@@ -67,4 +67,10 @@ class UserServiceImplTest {
     void addOneArticleCountById() {
         userService.addOneArticleCountById(1L);
     }
+
+    @Transactional
+    @Test
+    void subOneArticleCountById() {
+        userService.subOneArticleCountById(1L);
+    }
 }
