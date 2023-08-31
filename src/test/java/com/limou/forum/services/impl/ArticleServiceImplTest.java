@@ -70,8 +70,9 @@ class ArticleServiceImplTest {
         articleService.thumbsById(6L);
     }
 
+    @Transactional
     @Test
-    void deleteById() {
-        articleService.deleteById(13L);
+    void addOneReplyCountById() {
+        articleService.addOneReplyCountById(4L);
     }
 }

@@ -518,13 +518,50 @@
             }
 
             // 构造帖子对象
+            let postData = {
+                articleId: articleIdEl.val(),
+                content: replyContentEl.val()
+            }
 
             // 发送请求，成功后
             // 1. 清空回复区域
             // 2. 更新回贴数 currentArticle.replyCount = currentArticle.replyCount + 1;
             // 3. 调用loadArticleDetailsReply()方法，重新构建回贴列表
-
-            $.ajax({});
+            $.ajax({
+                type: 'post',
+                url: 'reply/create',
+                contentType: 'application/x-www-form-urlencoded',
+                data: postData,
+                success: function (respData) {
+                    if (respData.code == 0) {
+                        // 清空回复内容区
+                        $('#details_article_reply_content').val('');
+                        // 更新回贴数
+                        currentArticle.replyCount = currentArticle.replyCount + 1;
+                        $('#details_article_replyCount').html(currentArticle.replyCount);
+                        // 重新构建评论列表
+                        loadArticleDetailsReply();
+                        $.toast({
+                            heading: '提示',
+                            text: '评论成功',
+                            icon: 'success'
+                        });
+                    } else {
+                        $.toast({
+                            heading: '警告',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function () {
+                    $.toast({
+                        heading: '错误',
+                        text: '访问出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
         });
 
         // ====================== 处理删除事件 ======================
