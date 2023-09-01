@@ -121,7 +121,7 @@ public class ArticleController {
         }
         // 非空校验
         if (ObjUtil.isEmpty(articles)) {
-            // 如果不赋值一个空对象，那么将来JSON字符串里的data就是"null"这个字符串，如果赋值空对象了就是一个空数组[]
+            // 如果不赋值一个空对象，那么将来JSON字符串里的data就是"null"这个字符串，如果赋值空对象了就是一个空数组[]，其实可以不这样操作，因为Mybatis查询结果集为空时，返回的list是空集合(size=0)而并非null
             articles = new ArrayList<>();
         }
         // 返回结果

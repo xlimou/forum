@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author 小李哞哞
@@ -68,5 +69,18 @@ public class ArticleReplyServiceImpl implements IArticleReplyService {
 
         // 测试事务是否正常生效
         // throw new ApplicationException("测试事务");
+    }
+
+    @Override
+    public List<ArticleReply> selectByArticleId(Long articleId) {
+        // 参数校验
+        if (ObjUtil.isEmpty(articleId) || articleId <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 调用DAO并返回结果
+        return articleReplyMapper.selectByArticleId(articleId);
     }
 }

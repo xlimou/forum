@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.limou.forum.dao.ArticleReplyMapper">
+
+    <!-- 自定义结果集映射 -->
+    <resultMap id="AllInfoResultMap" type="com.limou.forum.model.ArticleReply" extends="BaseResultMap">
+        <!-- 关联的用户映射 -->
+        <association property="user" resultMap="com.limou.forum.dao.UserMapper.BaseResultMap" columnPrefix="u_"/>
+    </resultMap>
+
+    <!-- 根据帖子id查询评论信息，其中包含评论发布者信息 -->
+    <select id="selectByArticleId" resultMap="AllInfoResultMap" parameterType="java.lang.Long">
+        SELECT
+            ar.postUserId AS u_id,
+            u.nickname AS u_nickname,
+            u.avatarUrl AS u_avatarUrl,
+            ar.id,
+            ar.articleId,
+            ar.content,
+            ar.likeCount,
+            ar.createTime,
+            ar.updateTime
+        FROM
+            t_article_reply ar
+            JOIN t_user u ON ar.postUserId = u.id
+        WHERE
+            ar.articleId = #{articleId, jdbcType=BIGINT}
+            AND ar.deleteState = 0
+        ORDER BY
+            ar.createTime DESC
+    </select>
+</mapper>

@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,9 +27,15 @@ class ArticleReplyServiceImplTest {
     void create() {
         // 构造一条帖子评论
         ArticleReply articleReply = new ArticleReply();
-        articleReply.setArticleId(4L);
+        articleReply.setArticleId(19L);
         articleReply.setPostUserId(2L);
-        articleReply.setContent("牛蛙牛蛙");
+        articleReply.setContent("单元测试时间");
         articleReplyService.create(articleReply);
+    }
+
+    @Test
+    void selectByArticleId() {
+        List<ArticleReply> articleReplies = articleReplyService.selectByArticleId(4L);
+        articleReplies.forEach(System.out::println);
     }
 }

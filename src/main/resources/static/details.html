@@ -364,7 +364,28 @@
         // url: 'article/getReplies?articleId=' + currentArticle.id
         // 成功后，调用buildArticleReply()方法构建回复列表
         function loadArticleDetailsReply() {
-            $.ajax({});
+            $.ajax({
+                type: 'get',
+                url: 'reply/getReplies/' + currentArticle.id,
+                success: function (respData) {
+                    if (respData.code == 0) {
+                        buildArticleReply(respData.data);
+                    } else {
+                        $.toast({
+                            heading: '警告',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function () {
+                    $.toast({
+                        heading: '错误',
+                        text: '访问出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
         }
 
         //
@@ -535,7 +556,7 @@
                 success: function (respData) {
                     if (respData.code == 0) {
                         // 清空回复内容区
-                        $('#details_article_reply_content').val('');
+                        editor.cm.setValue('');
                         // 更新回贴数
                         currentArticle.replyCount = currentArticle.replyCount + 1;
                         $('#details_article_replyCount').html(currentArticle.replyCount);

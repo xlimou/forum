@@ -13,6 +13,7 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss # 返回数据时JSON日期序列化格式
     default-property-inclusion: NON_NULL # 不为null时序列化
+    time-zone: GMT+8 # Java中的Date默认不是东八区时间，JSON序列化时设置为东八区
 
 # 服务器配置
 server:

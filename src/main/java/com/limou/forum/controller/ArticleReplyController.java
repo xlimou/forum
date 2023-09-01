@@ -17,14 +17,13 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author 小李哞哞
@@ -92,5 +91,28 @@ public class ArticleReplyController {
         articleReplyService.create(articleReply);
         // 返回成功结果
         return AppResult.success();
+    }
+
+    @Operation(summary = "获取帖子评论列表")
+    @Parameter(name = "articleId", description = "帖子id", required = true, in = ParameterIn.PATH)
+    @GetMapping("/getReplies/{articleId}")
+    public AppResult getRepliesByArticleId(@PathVariable("articleId") @NonNull Long articleId) {
+
+        Article article = articleService.selectById(articleId);
+        // 非空校验
+        if (ObjUtil.isEmpty(article)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS);
+        }
+        // 调用Service
+        List<ArticleReply> articleReplies = articleReplyService.selectByArticleId(articleId);
+        // 非空校验(可以不做，Mybatis会做)
+        if (ObjUtil.isEmpty(articleReplies)) {
+            articleReplies = new ArrayList<>();
+        }
+        // 返回成功结果
+        return AppResult.success(articleReplies);
     }
 }
