@@ -15,14 +15,12 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author 小李哞哞
@@ -90,7 +88,47 @@ public class MessageController {
         // 调用Service
         messageService.create(message);
 
+        // 打印日志
+        log.info("发送私信成功, 发送方 user id = {}, 接受方 user id = {}", user.getId(), receiveUser.getId());
+
         // 返回成功结果
         return AppResult.success();
+    }
+
+    /**
+     * 获取未读消息个数
+     *
+     * @return AppResult
+     */
+    @Operation(summary = "获取未读消息个数")
+    @GetMapping("/getUnreadCount")
+    public AppResult getUnreadCount(HttpServletRequest request) {
+        // 获取当前登录用户
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+
+        // 调用DAO
+        Integer count = messageService.selectUnreadCount(user.getId());
+        // 打印日志
+        log.info("user id = {} 的用户未读消息个数是 {}", user.getId(), count);
+        // 返回结果
+        return AppResult.success(count);
+    }
+
+    /**
+     * 获取当前用户所有站内信信息，包含发送者信息
+     *
+     * @return AppResult
+     */
+    @Operation(summary = "获取当前用户所有站内信")
+    @GetMapping("/getAll")
+    public AppResult getAll(HttpServletRequest request) {
+        // 获取当前登录的用户
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        // 调用Service
+        List<Message> messages = messageService.selectByReceiveUserId(user.getId());
+        // 返回结果
+        return AppResult.success(messages);
     }
 }

@@ -22,6 +22,19 @@ public class Message {
 
     private Date updateTime;
 
+    /**
+     * 关联消息发送者
+     */
+    private User postUser;
+
+    public User getPostUser() {
+        return postUser;
+    }
+
+    public void setPostUser(User postUser) {
+        this.postUser = postUser;
+    }
+
     public Long getId() {
         return id;
     }

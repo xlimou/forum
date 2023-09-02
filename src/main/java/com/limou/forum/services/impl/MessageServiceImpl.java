@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author 小李哞哞
@@ -72,5 +73,40 @@ public class MessageServiceImpl implements IMessageService {
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
         }
 
+    }
+
+    @Override
+    public Integer selectUnreadCount(Long receiveUserId) {
+        // 参数校验
+        if (ObjUtil.isEmpty(receiveUserId) || receiveUserId <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 调用DAO
+        Integer count = messageMapper.selectUnreadCount(receiveUserId);
+        // 结果校验, 正常的查询是不可能出现null这个结果的，倘若出现就抛出服务器异常
+        if (ObjUtil.isEmpty(count)) {
+            // 打印日志
+            log.warn(ResultCode.ERROR_SERVICES.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_SERVICES));
+        }
+        // 返回结果
+        return count;
+    }
+
+    @Override
+    public List<Message> selectByReceiveUserId(Long receiveUserId) {
+        // 参数校验
+        if (ObjUtil.isEmpty(receiveUserId) || receiveUserId <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 调用DAO并返回结果
+        return messageMapper.selectByReceiveUserId(receiveUserId);
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,5 +31,17 @@ class MessageServiceImplTest {
         message.setReceiveUserId(1L);
         message.setContent("测试消息111");
         messageService.create(message);
+    }
+
+    @Test
+    void selectUnreadCount() {
+        Integer count = messageService.selectUnreadCount(2L);
+        System.out.println(count);
+    }
+
+    @Test
+    void selectByReceiveUserId() {
+        List<Message> messages = messageService.selectByReceiveUserId(2L);
+        messages.forEach(System.out::println);
     }
 }

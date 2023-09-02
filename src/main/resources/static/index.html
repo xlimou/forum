@@ -566,16 +566,68 @@
         // url = message/getUnreadCount
         // 成功后，处理小红点是否显示 #index_nva_message_badge
         function requestMessageUnreadCount() {
-            $.ajax({});
+            $.ajax({
+                type: 'get',
+                url: 'message/getUnreadCount',
+                success: function (respData) {
+                    if (respData.code == 0) {
+                        let messageRedPoint = $('#index_nva_message_badge');
+                        if (respData.data > 0) {
+                            messageRedPoint.show();
+                        } else {
+                            messageRedPoint.hide();
+                        }
+                    } else {
+                        cleanMessageForm();
+                        $.toast({
+                            heading: '警告',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function () {
+                    cleanMessageForm();
+                    $.toast({
+                        heading: '错误',
+                        text: '访问出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
         }
 
+        // 方法调用
         requestMessageUnreadCount();
 
 
         // ============ 获取用户所有站内信 ============
         // 成功后，调用buildMessageList() 方法构建站内信列表
         function requestMessageList() {
-            $.ajax({});
+            $.ajax({
+                type: 'get',
+                url: 'message/getAll',
+                success: function (respData) {
+                    if (respData.code == 0) {
+                        buildMessageList(respData.data);
+                    } else {
+                        cleanMessageForm();
+                        $.toast({
+                            heading: '警告',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function () {
+                    cleanMessageForm();
+                    $.toast({
+                        heading: '错误',
+                        text: '访问出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
         }
 
         requestMessageList();

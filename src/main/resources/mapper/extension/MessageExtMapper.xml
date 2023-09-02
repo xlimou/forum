@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.limou.forum.dao.MessageMapper">
+
+    <!-- 自定义结果集映射 -->
+    <resultMap id="AllInfoResultMap" type="com.limou.forum.model.Message" extends="BaseResultMap">
+        <!-- 关联发送者对象 -->
+        <association property="postUser" resultMap="com.limou.forum.dao.UserMapper.BaseResultMap" columnPrefix="p_"/>
+    </resultMap>
+    <!-- 根据用户id查询用户未读站内信数量 -->
+    <select id="selectUnreadCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            t_message
+        WHERE
+            state = 0
+            AND deleteState = 0
+            AND receiveUserId = #{receiveUserId,jdbcType=BIGINT}
+    </select>
+
+    <!-- 根据用户id查询用户所有站内信信息，包含发送者信息 -->
+    <select id="selectByReceiveUserId" resultMap="AllInfoResultMap" parameterType="java.lang.Long">
+        SELECT
+            p.id AS p_id,
+            p.nickname AS p_nickname,
+            p.avatarUrl AS p_avatarUrl,
+            p.gender AS p_gender,
+            m.id,
+            m.postUserId,
+            m.receiveUserId,
+            m.content,
+            m.state,
+            m.createTime,
+            m.updateTime
+        FROM
+            t_message m
+            JOIN t_user p ON m.postUserId = p.id
+        WHERE
+            m.deleteState = 0
+            AND m.receiveUserId = #{receiveUserId,jdbcType=BIGINT}
+        ORDER BY
+            m.createTime DESC,
+            m.state ASC
+    </select>
+</mapper>
