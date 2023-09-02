@@ -75,4 +75,11 @@ class ArticleServiceImplTest {
     void addOneReplyCountById() {
         articleService.addOneReplyCountById(4L);
     }
+
+    @Test
+    void selectByUserId() {
+        List<Article> articles = articleService.selectByUserId(2L);
+        articles.forEach(System.out::println);
+    }
+
 }

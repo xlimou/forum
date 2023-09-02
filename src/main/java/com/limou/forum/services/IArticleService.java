@@ -1,6 +1,7 @@
 package com.limou.forum.services;
 
 import com.limou.forum.model.Article;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -80,4 +81,12 @@ public interface IArticleService {
      * @param id 帖子id
      */
     void addOneReplyCountById(Long id);
+
+    /**
+     * 按照用户id查询帖子列表，每条帖子记录包含帖子信息、作者信息
+     *
+     * @param userId 用户id
+     * @return 帖子列表
+     */
+    List<Article> selectByUserId(Long userId);
 }

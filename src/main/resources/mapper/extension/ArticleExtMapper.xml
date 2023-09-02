@@ -93,4 +93,32 @@
             a.deleteState = 0
             AND a.id = #{id, jdbcType=BIGINT}
     </select>
+
+    <!-- 按照用户id查询帖子信息(包含帖子信息、作者信息和板块信息) -->
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="AllInfoResultMap">
+        SELECT
+            a.id,
+            u.id AS u_id,
+            u.avatarUrl AS u_avatarUrl,
+            u.nickname AS u_nickname,
+            b.id AS b_id,
+            b.name AS b_name,
+            a.boardId,
+            a.userId,
+            a.title,
+            a.createTime,
+            a.visitCount,
+            a.likeCount,
+            a.replyCount,
+            a.state
+        FROM
+            t_article a
+                JOIN t_user u ON a.userId = u.id
+                JOIN t_board b ON a.boardId = b.id
+        WHERE
+            a.deleteState = 0
+            AND a.userId = #{userId,jdbcType=BIGINT}
+        ORDER BY
+            a.createTime DESC
+    </select>
 </mapper>

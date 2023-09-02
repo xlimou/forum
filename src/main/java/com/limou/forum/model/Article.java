@@ -43,14 +43,14 @@ public class Article {
     /**
      * 是否为作者 - 这个属性用来在帖子详情页判断是否是作者在操作
      */
-    private boolean isOwn = false;
+    private Boolean own;
 
-    public boolean isOwn() {
-        return isOwn;
+    public Boolean isOwn() {
+        return own;
     }
 
-    public void setOwn(boolean own) {
-        isOwn = own;
+    public void setOwn(Boolean own) {
+        this.own = own;
     }
 
     public Board getBoard() {

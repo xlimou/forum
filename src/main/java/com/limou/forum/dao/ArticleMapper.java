@@ -42,4 +42,12 @@ public interface ArticleMapper {
      * @return 帖子详细信息
      */
     Article selectDetailById(@Param("id") Long id);
+
+    /**
+     * 按照用户id查询帖子列表，每条帖子记录包含帖子信息、作者信息
+     *
+     * @param userId 用户id
+     * @return 帖子列表
+     */
+    List<Article> selectByUserId(@Param("userId") Long userId);
 }

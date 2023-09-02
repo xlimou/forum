@@ -279,4 +279,29 @@ public class ArticleController {
         // 返回成功结果
         return AppResult.success();
     }
+
+    /**
+     * 获取用户的帖子列表
+     *
+     * @param userId 用户id
+     * @return AppResult
+     */
+    @Operation(summary = "获取用户帖子列表", description = "若userId为空，就获取当前登录的用户的帖子列表，否则获取指定用户的帖子列表")
+    @Parameter(name = "userId", description = "用户id", in = ParameterIn.PATH)
+    @GetMapping({"/getAllByUserId", "/getAllByUserId/{userId}"})
+    public AppResult getAllByUserId(HttpServletRequest request,
+                                    @PathVariable(value = "userId", required = false) Long userId) {
+
+        // 非空校验
+        if (ObjUtil.isEmpty(userId)) {
+            // 获取当前登录的用户信息
+            HttpSession session = request.getSession(false);
+            User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+            userId = user.getId();
+        }
+        // 调用Service
+        List<Article> articles = articleService.selectByUserId(userId);
+        // 返回成功结果
+        return AppResult.success(articles);
+    }
 }

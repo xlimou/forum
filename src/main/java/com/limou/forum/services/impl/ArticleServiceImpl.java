@@ -310,4 +310,19 @@ public class ArticleServiceImpl implements IArticleService {
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
         }
     }
+
+    @Override
+    public List<Article> selectByUserId(Long userId) {
+        // 调用Service查询用户信息，里面已经进行数据校验了
+        User user = userService.selectById(userId);
+        // 非空校验
+        if (ObjUtil.isEmpty(user)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_USER_NOT_EXISTS.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS));
+        }
+        // 调用DAO根据userId查询帖子列表
+        return articleMapper.selectByUserId(userId);
+    }
 }
