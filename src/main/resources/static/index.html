@@ -506,7 +506,7 @@
                 });
                 // 输入框
                 messageContentEl.focus();
-                retrun;
+                return;
             }
 
             // 构造发送数据
@@ -516,7 +516,37 @@
             };
 
             // 发送站内信请求 url = message/send, 成功与失败都调用cleanMessageForm()方法，清空输入框
-            $.ajax({});
+            $.ajax({
+                type: 'post',
+                url: 'message/send/',
+                contentType: 'application/x-www-form-urlencoded',
+                data: postData,
+                success: function (respData) {
+                    if (respData.code == 0) {
+                        cleanMessageForm();
+                        $.toast({
+                            heading: '提示',
+                            text: '发送成功',
+                            icon: 'success'
+                        });
+                    } else {
+                        cleanMessageForm();
+                        $.toast({
+                            heading: '警告',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function () {
+                    cleanMessageForm();
+                    $.toast({
+                        heading: '错误',
+                        text: '访问出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
         });
 
         // 清空站内信输入区
