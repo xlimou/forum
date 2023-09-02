@@ -240,7 +240,7 @@
         // 邮箱
         $('#setting_input_email').val(user.email);
         // 电话
-        $('#setting_input_phoneNum').val(user.phoneNum);
+        $('#setting_input_phoneNum').val(user.phoneNumber);
         // 个人简历
         $('#settings_textarea_remark').html(user.remark);
     }
@@ -263,15 +263,49 @@
         console.log(queryString);
 
         // 定义接口路径
-        let userURL = 'user/modifyInfo';
-        if (type == 1) {
-            userURL = 'user/modifyInfo';
-        } else if (type == 2) {
-            userURL = 'user/modifyPwd';
+        let userURL = 'user/modifyInfo/';
+        if (type == 2) {
+            userURL = 'user/modifyPwd/';
         }
 
         // 发送请求，提示响应结果
-        $.ajax({});
+        $.ajax({
+            type: 'post',
+            url: userURL,
+            contentType: 'application/x-www-form-urlencoded',
+            data: userInfo,
+            success: function (respData) {
+                if (respData.code == 0) {
+                    if (type == 2) {
+                        location.assign('/sign-in.html');
+                        return;
+
+                    }
+                    let user = respData.data;
+                    // 将页面上的信息更新为最新的值
+                    $('#settings_nickname').html(user.nickname);
+                    $('#index_nav_nickname').html(user.nickname);
+                    $.toast({
+                        heading: '提示',
+                        text: '修改成功',
+                        icon: 'success'
+                    });
+                } else {
+                    $.toast({
+                        heading: '警告',
+                        text: respData.message,
+                        icon: 'warning'
+                    });
+                }
+            },
+            error: function () {
+                $.toast({
+                    heading: '错误',
+                    text: '访问出现问题，请与管理员联系',
+                    icon: 'error'
+                });
+            }
+        });
 
     }
 
@@ -292,7 +326,6 @@
         }
         // 构造数据
         let nicknameObj = {
-            id: $('#settings_user_id').val(),
             nickname: nicknameEl.val()
         }
         // 发送请求
@@ -310,7 +343,6 @@
         }
         // 构造数据
         let emailObj = {
-            id: $('#settings_user_id').val(),
             email: emailEl.val()
         }
         // 发送请求
@@ -328,8 +360,7 @@
         }
         // 构造数据
         let phoneNumObj = {
-            id: $('#settings_user_id').val(),
-            phoneNum: phoneNumEl.val()
+            phoneNumber: phoneNumEl.val()
         }
         // 发送请求
         changeUserInfo(phoneNumObj);
@@ -347,7 +378,6 @@
         }
         // 构造数据
         let remarkObj = {
-            id: $('#settings_user_id').val(),
             remark: remarkEl.val()
         }
         // 发送请求

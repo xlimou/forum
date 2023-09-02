@@ -24,6 +24,7 @@ public enum ResultCode {
     FAILED_USER_BANNED              (1104, "您已被禁言，请联系管理员，并重新登录"),
     FAILED_TWO_PWD_NOT_SAME         (1105, "两次输入的密码不一致"),
     FAILED_USER_ARTICLE_COUNT       (1106, "更新用户帖子数量失败"),
+    FAILED_OLD_PWD_ERROR            (1107, "旧密码输入错误"),
 
     // 关于板块的错误描述=======================================================================
     FAILED_BOARD_ARTICLE_COUNT      (1201, "更新板块帖子数量失败"),

@@ -156,4 +156,112 @@ public class UserController {
         return AppResult.success("退出成功");
     }
 
+    /**
+     * 修改用户信息
+     *
+     * @param username    用户名(登录名)
+     * @param nickname    昵称
+     * @param gender      性别
+     * @param email       邮箱
+     * @param phoneNumber 电话
+     * @param remark      个人简介
+     * @return AppResult
+     */
+    @Operation(summary = "修改用户信息")
+    @Parameters({
+            @Parameter(name = "username", description = "用户名(登录名)", in = ParameterIn.DEFAULT),
+            @Parameter(name = "nickname", description = "昵称", in = ParameterIn.DEFAULT),
+            @Parameter(name = "gender", description = "性别", in = ParameterIn.DEFAULT),
+            @Parameter(name = "email", description = "邮箱", in = ParameterIn.DEFAULT),
+            @Parameter(name = "phoneNumber", description = "电话", in = ParameterIn.DEFAULT),
+            @Parameter(name = "remark", description = "个人简介", in = ParameterIn.DEFAULT),
+    })
+    @PostMapping("/modifyInfo")
+    public AppResult modifyInfo(HttpServletRequest request,
+                                @RequestParam(value = "username", required = false) String username,
+                                @RequestParam(value = "nickname", required = false) String nickname,
+                                @RequestParam(value = "gender", required = false) Byte gender,
+                                @RequestParam(value = "email", required = false) String email,
+                                @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+                                @RequestParam(value = "remark", required = false) String remark) {
+
+        // 参数校验
+        if (StrUtil.isBlank(username)
+                && StrUtil.isBlank(nickname)
+                && ObjUtil.isEmpty(gender)
+                && StrUtil.isBlank(email)
+                && StrUtil.isBlank(phoneNumber)
+                && StrUtil.isBlank(remark)) {
+
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE);
+        }
+        // 获取当前登录用户
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        // 构造修改对象
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setUsername(username);
+        updateUser.setNickname(nickname);
+        updateUser.setGender(gender);
+        updateUser.setEmail(email);
+        updateUser.setPhoneNumber(phoneNumber);
+        updateUser.setRemark(remark);
+        // 调用Service
+        userService.modifyInfo(updateUser);
+        // 打印成功日志
+        log.info("修改成功, user id = {}", user.getId());
+        // 查询修改后的用户信息
+        user = userService.selectById(user.getId());
+        // 将session中的用户信息修改为最新的
+        session.setAttribute(AppConfig.USER_SESSION, user);
+        // 返回成功结果
+        return AppResult.success(user);
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param oldPassword    旧密码
+     * @param newPassword    新密码
+     * @param passwordRepeat 确认密码
+     * @return AppResult
+     */
+    @Operation(summary = "修改密码")
+    @Parameters({
+            @Parameter(name = "oldPassword", description = "旧密码", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "newPassword", description = "新密码", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "passwordRepeat", description = "确认密码", required = true, in = ParameterIn.DEFAULT),
+    })
+    @PostMapping("/modifyPwd")
+    public AppResult modifyPwd(HttpServletRequest request,
+                               @RequestParam("oldPassword") @NonNull String oldPassword,
+                               @RequestParam("newPassword") @NonNull String newPassword,
+                               @RequestParam("passwordRepeat") @NonNull String passwordRepeat) {
+
+        // 判断密码与确认密码是否相同
+        if (!StrUtil.equals(newPassword, passwordRepeat)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_TWO_PWD_NOT_SAME.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_TWO_PWD_NOT_SAME);
+        }
+
+        // 获取当前登录用户
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+
+        // 调用Service
+        userService.modifyPassword(user.getId(), newPassword, oldPassword);
+        // 打印日志
+        log.info("密码修改成功, user id = {}", user.getId());
+        // 让当前session失效，强迫用户使用新密码重新登录
+        session.invalidate();
+        // 返回成功结果
+        return AppResult.success();
+    }
+
 }

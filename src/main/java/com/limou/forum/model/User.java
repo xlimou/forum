@@ -2,7 +2,6 @@ package com.limou.forum.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.ToString;
 
 import java.util.Date;

@@ -67,4 +67,13 @@ public interface IUserService {
      * @param user 要修改的用户
      */
     void modifyInfo(User user);
+
+    /**
+     * 修改密码
+     *
+     * @param id          用户id
+     * @param newPassword 新密码
+     * @param oldPassword 老密码
+     */
+    void modifyPassword(Long id, String newPassword, String oldPassword);
 }

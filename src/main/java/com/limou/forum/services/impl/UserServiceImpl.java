@@ -10,6 +10,7 @@ import com.limou.forum.exception.ApplicationException;
 import com.limou.forum.model.User;
 import com.limou.forum.services.IUserService;
 import com.limou.forum.utils.MD5Util;
+import com.limou.forum.utils.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -254,7 +255,7 @@ public class UserServiceImpl implements IUserService {
                 throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USERNAME_EXISTS));
             }
             // 打印日志
-            log.info("用户名(登录名)需要修改");
+            log.info("用户名(登录名)即将修改");
             // 校验通过，设置用户名
             updateUser.setUsername(user.getUsername());
             // 更新标志位
@@ -265,7 +266,7 @@ public class UserServiceImpl implements IUserService {
                 && !StrUtil.equals(existsUser.getNickname(), user.getNickname())) {
 
             // 打印日志
-            log.info("昵称需要修改");
+            log.info("昵称即将修改");
             // 设置昵称
             updateUser.setNickname(user.getNickname());
             // 更新标志位
@@ -276,7 +277,7 @@ public class UserServiceImpl implements IUserService {
                 && !ObjUtil.equals(existsUser.getGender(), user.getGender())) {
 
             // 打印日志
-            log.info("性别需要修改");
+            log.info("性别即将修改");
             // 设置性别
             updateUser.setGender(user.getGender());
             // 性别合法性校验
@@ -292,7 +293,7 @@ public class UserServiceImpl implements IUserService {
                 && !StrUtil.equals(existsUser.getEmail(), user.getEmail())) {
 
             // 打印日志
-            log.info("邮箱需要修改");
+            log.info("邮箱即将修改");
             // 设置邮箱
             updateUser.setEmail(user.getEmail());
             // 更新标志位
@@ -303,7 +304,7 @@ public class UserServiceImpl implements IUserService {
                 && !StrUtil.equals(existsUser.getPhoneNumber(), user.getPhoneNumber())) {
 
             // 打印日志
-            log.info("电话号码需要修改");
+            log.info("电话号码即将修改");
             // 设置电话号码
             updateUser.setPhoneNumber(user.getPhoneNumber());
             // 更新标志位
@@ -314,7 +315,7 @@ public class UserServiceImpl implements IUserService {
                 && !StrUtil.equals(existsUser.getRemark(), user.getRemark())) {
 
             // 打印日志
-            log.info("个人简介需要修改");
+            log.info("个人简介即将修改");
             // 设置个人简介
             updateUser.setRemark(user.getRemark());
             // 设置标志位
@@ -329,6 +330,57 @@ public class UserServiceImpl implements IUserService {
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
         }
 
+        // 调用DAO
+        int row = userMapper.updateByPrimaryKeySelective(updateUser);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
+
+    @Override
+    public void modifyPassword(Long id, String newPassword, String oldPassword) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id)
+                || id <= 0
+                || StrUtil.isBlank(newPassword)
+                || StrUtil.isBlank(oldPassword)) {
+
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 查询用户信息
+        User user = userMapper.selectByPrimaryKey(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(user)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_USER_NOT_EXISTS.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS));
+        }
+        // 校验老密码是否正确
+        String oldEncryptPwd = MD5Util.md5Salt(oldPassword, user.getSalt());
+        if (!StrUtil.equals(oldEncryptPwd, user.getPassword())) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_OLD_PWD_ERROR.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_OLD_PWD_ERROR));
+        }
+        // 获取新盐
+        String salt = UUIDUtil.UUID_32();
+        // 新密码加密
+        String newEncryptPwd = MD5Util.md5Salt(newPassword, salt);
+        // 构造修改对象
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setSalt(salt);
+        updateUser.setPassword(newEncryptPwd);
+        updateUser.setUpdateTime(new Date());
         // 调用DAO
         int row = userMapper.updateByPrimaryKeySelective(updateUser);
         // 结果校验
