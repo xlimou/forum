@@ -60,4 +60,11 @@ public interface IUserService {
      * 判断当前登录用户是否被禁言，若被禁言则会抛出异常
      */
     void checkState(HttpServletRequest request) throws ApplicationException;
+
+    /**
+     * 修改用户信息
+     *
+     * @param user 要修改的用户
+     */
+    void modifyInfo(User user);
 }

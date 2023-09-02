@@ -73,4 +73,19 @@ class UserServiceImplTest {
     void subOneArticleCountById() {
         userService.subOneArticleCountById(1L);
     }
+
+    @Transactional
+    @Test
+    void modifyInfo() {
+        // 构造要修改的用户对象
+        User user = new User();
+        user.setId(3L);
+        user.setUsername("lisi");
+        user.setNickname("李四");
+        user.setGender((byte) 2);
+        user.setEmail("email@qq.com");
+        user.setPhoneNumber("18888888888");
+        user.setRemark("梅花科硕了");
+        userService.modifyInfo(user);
+    }
 }

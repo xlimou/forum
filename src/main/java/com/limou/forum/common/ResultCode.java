@@ -17,6 +17,7 @@ public enum ResultCode {
     FAILED_NOT_EXISTS               (1005, "资源不存在"),
 
     // 关于用户的错误描述=======================================================================
+    FAILED_USERNAME_EXISTS          (1100, "用户名已存在"),
     FAILED_USER_EXISTS              (1101, "用户已存在"),
     FAILED_USER_NOT_EXISTS          (1102, "用户不存在"),
     FAILED_LOGIN                    (1103, "用户名或密码错误"),

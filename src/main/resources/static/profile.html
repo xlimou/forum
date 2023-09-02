@@ -110,7 +110,7 @@
             url: 'user/info/' + (profileUserId ? profileUserId : ''),
             success: function(respData) {
                 if (respData.code == 0) {
-                    initProfileUserInfo(respData.data)
+                    initProfileUserInfo(respData.data);
                 } else {
                     $.toast({
                         heading: '警告',
