@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -167,6 +168,76 @@ public class MessageController {
         messageService.updateStateById(id, (byte) 1);
         // 打印日志
         log.info("修改状态成功，message id = {}, state = {}, 已读", id, 1);
+        // 返回成功结果
+        return AppResult.success();
+    }
+
+    /**
+     * 回复私信
+     *
+     * @param repliedId 要回复的私信的id
+     * @param content   私信内容
+     * @return AppResult
+     */
+    @Operation(summary = "回复站内信")
+    @Parameters({
+            @Parameter(name = "repliedId", description = "要回复的私信的id", required = true, in = ParameterIn.DEFAULT),
+            @Parameter(name = "content", description = "私信内容", required = true, in = ParameterIn.DEFAULT)
+    })
+    @PostMapping("/reply")
+    public AppResult reply(HttpServletRequest request,
+                           @RequestParam("repliedId") @NonNull Long repliedId,
+                           @RequestParam("content") @NonNull String content) {
+
+        // 获取当前登录用户
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+
+        // 校验当前用户是否被禁言
+        userService.checkState(request);
+
+        // 获取repliedId对应的消息对象
+        Message message = messageService.selectById(repliedId);
+        // 非空校验
+        if (ObjUtil.isEmpty(message)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_MESSAGE_NOT_EXISTS.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_MESSAGE_NOT_EXISTS);
+        }
+
+        // 本次回复的消息接收方就是发送这条消息的发送方
+        Long receiveUserId = message.getPostUserId();
+
+        // 判断接收方是不是当前用户
+        if (ObjUtil.equals(user.getId(), receiveUserId)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_MESSAGE_SELF.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_MESSAGE_SELF);
+        }
+
+        // 判断接收方是否存在
+        User receiveUser = userService.selectById(receiveUserId);
+        if (ObjUtil.isEmpty(receiveUser)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_USER_NOT_EXISTS.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS);
+        }
+
+        // 构造要发送的消息对象
+        Message sendMsg = new Message();
+        sendMsg.setPostUserId(user.getId());
+        sendMsg.setReceiveUserId(receiveUserId);
+        sendMsg.setContent(content);
+
+        // 调用Service
+        messageService.reply(repliedId, sendMsg);
+
+        // 打印日志
+        log.info("回复成功, 回复者: user id = {}, 接收者: user id = {}", user.getId(), message.getPostUserId());
+
         // 返回成功结果
         return AppResult.success();
     }

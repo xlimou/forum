@@ -2,6 +2,7 @@ package com.limou.forum.services;
 
 import com.limou.forum.model.Message;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,4 +50,13 @@ public interface IMessageService {
      * @return 站内信信息
      */
     Message selectById(Long id);
+
+    /**
+     * 回复站内信
+     *
+     * @param repliedId 要回复的站内信id
+     * @param message   回复的消息对象
+     */
+    @Transactional
+    void reply(Long repliedId, Message message);
 }

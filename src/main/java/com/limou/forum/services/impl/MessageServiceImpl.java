@@ -152,4 +152,25 @@ public class MessageServiceImpl implements IMessageService {
         // 调用DAO并返回
         return messageMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public void reply(Long repliedId, Message message) {
+        // 调用已有方法查询站内信信息
+        Message existsMsg = selectById(repliedId);
+        // 非空校验
+        if (ObjUtil.isEmpty(existsMsg)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_MESSAGE_NOT_EXISTS.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_MESSAGE_NOT_EXISTS));
+        }
+        // 更新状态为2(已回复)
+        updateStateById(repliedId, (byte) 2);
+
+        // 将回复的消息写入数据库
+        create(message);
+
+        // 测试事务
+        // throw new ApplicationException("测试事务");
+    }
 }

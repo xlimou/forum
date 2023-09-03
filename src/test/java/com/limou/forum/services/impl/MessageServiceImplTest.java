@@ -56,4 +56,15 @@ class MessageServiceImplTest {
         Message message = messageService.selectById(1L);
         System.out.println(message);
     }
+
+    @Transactional
+    @Test
+    void reply() {
+        // 构造对象
+        Message message = new Message();
+        message.setContent("这是单元测试回复");
+        message.setPostUserId(1L);
+        message.setReceiveUserId(2L);
+        messageService.reply(2L, message);
+    }
 }
