@@ -131,4 +131,43 @@ public class MessageController {
         // 返回结果
         return AppResult.success(messages);
     }
+
+
+    @Operation(summary = "标记已读")
+    @Parameter(name = "id", description = "站内信id", required = true, in = ParameterIn.PATH)
+    @GetMapping("/markRead/{id}")
+    public AppResult markRead(HttpServletRequest request,
+                              @PathVariable("id") @NonNull Long id) {
+        // 根据id查询站内信
+        Message message = messageService.selectById(id);
+        // 非空校验
+        if (ObjUtil.isEmpty(message)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_MESSAGE_NOT_EXISTS.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_MESSAGE_NOT_EXISTS);
+        }
+        // 判断站内信是不是自己的(接收人是否是当前登录用户)
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        if (!ObjUtil.equals(user.getId(), message.getReceiveUserId())) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_FORBIDDEN.toString());
+            // 返回失败结果
+            return AppResult.failed(ResultCode.FAILED_FORBIDDEN);
+        }
+        // 判断站内信状态是否已经是已读
+        if (message.getState() == 1) {
+            // 打印日志
+            log.info("无需修改，状态为已读");
+            // 返回成功结果
+            return AppResult.success();
+        }
+        // 调用Service
+        messageService.updateStateById(id, (byte) 1);
+        // 打印日志
+        log.info("修改状态成功，message id = {}, state = {}, 已读", id, 1);
+        // 返回成功结果
+        return AppResult.success();
+    }
 }

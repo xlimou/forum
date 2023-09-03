@@ -109,4 +109,47 @@ public class MessageServiceImpl implements IMessageService {
         // 调用DAO并返回结果
         return messageMapper.selectByReceiveUserId(receiveUserId);
     }
+
+    @Override
+    public void updateStateById(Long id, Byte state) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id)
+                || id <= 0
+                || ObjUtil.isEmpty(state)
+                || state < 0
+                || state > 2) {
+
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 构造更新对象
+        Message updateMessage = new Message();
+        updateMessage.setId(id);
+        updateMessage.setState(state);
+        updateMessage.setUpdateTime(new Date());
+        // 调用DAO
+        int row = messageMapper.updateByPrimaryKeySelective(updateMessage);
+        // 结果校验
+        if (row != 1) {
+            // 打印日志
+            log.warn(ResultCode.FAILED.toString() + ", 预期受影响行数为 1, 实际受影响行数为: {}", row);
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
+
+    @Override
+    public Message selectById(Long id) {
+        // 参数校验
+        if (ObjUtil.isEmpty(id) || id <= 0) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_INVALIDATE.toString());
+            // 抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_INVALIDATE));
+        }
+        // 调用DAO并返回
+        return messageMapper.selectByPrimaryKey(id);
+    }
 }

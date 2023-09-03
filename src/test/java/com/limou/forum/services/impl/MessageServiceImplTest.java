@@ -44,4 +44,16 @@ class MessageServiceImplTest {
         List<Message> messages = messageService.selectByReceiveUserId(2L);
         messages.forEach(System.out::println);
     }
+
+    @Transactional
+    @Test
+    void updateStateById() {
+        messageService.updateStateById(2L, (byte) 1);
+    }
+
+    @Test
+    void selectById() {
+        Message message = messageService.selectById(1L);
+        System.out.println(message);
+    }
 }

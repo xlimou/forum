@@ -33,4 +33,20 @@ public interface IMessageService {
      * @return 站内信列表
      */
     List<Message> selectByReceiveUserId(Long receiveUserId);
+
+    /**
+     * 根据id更新站内信状态
+     *
+     * @param id    站内信id
+     * @param state 状态（0未读，1已读，2已回复）
+     */
+    void updateStateById(Long id, Byte state);
+
+    /**
+     * 根据id查询站内信信息
+     *
+     * @param id 站内信id
+     * @return 站内信信息
+     */
+    Message selectById(Long id);
 }

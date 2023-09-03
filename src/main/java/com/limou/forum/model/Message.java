@@ -14,6 +14,9 @@ public class Message {
 
     private String content;
 
+    /**
+     * 状态（0未读，1已读，2已回复）
+     */
     private Byte state;
 
     private Byte deleteState;
