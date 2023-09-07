@@ -45,3 +45,9 @@ yarn-error.log*
 
 # Others
 .DS_Store
+
+# 排除主配置文件
+/src/main/resources/application.yml
+# 排除SSL证书配置
+/src/main/resources/jks-password.txt
+/src/main/resources/www.limou.love.jks
